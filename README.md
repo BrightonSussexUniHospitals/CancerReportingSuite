@@ -21,4 +21,4 @@ This project came from a voluntary effort to improve the cancer reporting within
 BSUH's other open source offerings can be found at https://github.com/BrightonSussexUniHospitals
 Perspicacity's other open source offerings can be found at https://github.com/perspicacity-ltd
 
-If you'd like to find out more, please contact Matthew Bishop on 07545 878906 / matthew.bishop@perspicacityltd.co.uk or Richard Umney on 07500 872589 / richard.umney@nhs.net
+If you'd like to find out more, please contact Matthew Bishop on 07545 878906 / matthew.bishop@perspicacityltd.co.uk or Richard Umney on 07887 745071 / richard.umney@nhs.net
