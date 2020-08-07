@@ -4,13 +4,7 @@ This is a Microsoft SQL - based cancer data warehouse and reporting suite, inten
 ## A little bit about the reporting suite
 * This is cancer datawarehouse & reporting suite is designed for _shared development_ of reporting cancer data from the Somerset Cancer Registry
 * It is built in SQL server (compatible from 2012 onwards) and SSRS
-* The initial version is built on SCR Version 19.1
-
-## Installation instructions
-1. complete me later
-	 1. complete me later
-   1. complete me later
-1. complete me later
+* Because the underlying SCR schema changes between versions, there is a seperate branch corresponding to each SCR version. Whilst many objects within the suite will translate between SCR versions relatively easily, it seems this is the simplest way to maintain the pre-requisite dependencies. This readme, the license and any common documentation will still be posted against the master branch. The initial version is built on SCR Version 19.1
 
 ## A little bit about this joint venture from Perspicacity Ltd & Brighton & Sussex University Hospitals
 Perspicacity provides decision support consultancy, coaching, & development to the NHS. They are passionate about reducing the cost of software development to the NHS and aspire to create an active community of NHS and commercial organisations. They all share a common goal of improving the quality and efficiency of patient care through better, and more informed, decision making.
