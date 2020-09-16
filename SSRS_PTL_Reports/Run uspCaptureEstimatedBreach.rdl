@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="CancerSSRS">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=cancerssrs;Initial Catalog=CancerReporting</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:SecurityType>Integrated</rd:SecurityType>
+      <rd:DataSourceID>5c43f7f5-48df-4888-9ddd-5a931488c986</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="uspCaptureEstimatedBreach">
+      <Query>
+        <DataSourceName>CancerSSRS</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@CWT_ID">
+            <Value>=Parameters!CWT_ID.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@EstimatedWeight">
+            <Value>=Parameters!EstimatedWeight.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@EstimatedBreachDate">
+            <Value>=DateSerial(Parameters!EstimatedBreachYear.Value, Parameters!EstimatedBreachMonth.Value, Parameters!EstimatedBreachDay.Value)</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>CancerTransactions.uspCaptureEstimatedBreach</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="ReturnValue">
+          <DataField>ReturnValue</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="ReturnValue">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!ReturnValue.Value, "uspCaptureEstimatedBreach")</Value>
+                    <Style />
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>ReturnValue</rd:DefaultName>
+            <Top>0.5789cm</Top>
+            <Left>1.16005cm</Left>
+            <Height>0.6cm</Height>
+            <Width>2.5cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox42">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>© 2020 Perspicacity Ltd &amp; Brighton &amp; Sussex University Hospitals
+
+This report is a part of Perspicacity &amp; BSUH's Cancer Data Warehouse &amp; Reporting suite. It i</Value>
+                    <Style>
+                      <FontFamily>Arial</FontFamily>
+                      <FontSize>7pt</FontSize>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>s free software and  i</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>s licensed under the GNU Affero General Public License v3. A full copy of the code for this suite can be found at </Value>
+                    <Style>
+                      <FontFamily>Arial</FontFamily>
+                      <FontSize>7pt</FontSize>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>https://github.com/BrightonSussexUniHospitals/CancerReportingSuite</Value>
+                    <ActionInfo>
+                      <Actions>
+                        <Action>
+                          <Hyperlink>https://github.com/BrightonSussexUniHospitals/CancerReportingSuite</Hyperlink>
+                        </Action>
+                      </Actions>
+                    </ActionInfo>
+                    <Style>
+                      <FontFamily>Arial</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <Color>Blue</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">
+</Value>
+                    <Style>
+                      <FontFamily>Arial</FontFamily>
+                      <FontSize>7pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox27</rd:DefaultName>
+            <Top>3.27636cm</Top>
+            <Left>0.38365cm</Left>
+            <Height>1.38479cm</Height>
+            <Width>17.14313cm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <Height>2in</Height>
+        <Style />
+      </Body>
+      <Width>7.05135in</Width>
+      <Page>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>2cm</LeftMargin>
+        <RightMargin>2cm</RightMargin>
+        <TopMargin>2cm</TopMargin>
+        <BottomMargin>2cm</BottomMargin>
+        <ColumnSpacing>0.13cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="CWT_ID">
+      <DataType>String</DataType>
+      <Prompt>CWT_ID</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="EstimatedWeight">
+      <DataType>Float</DataType>
+      <Prompt>EstimatedWeight</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="EstimatedBreachYear">
+      <DataType>Integer</DataType>
+      <Prompt>EstimatedBreachYear</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="EstimatedBreachMonth">
+      <DataType>Integer</DataType>
+      <Prompt>EstimatedBreachMonth</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="EstimatedBreachDay">
+      <DataType>Integer</DataType>
+      <Prompt>EstimatedBreachDay</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>CWT_ID</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>EstimatedWeight</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>EstimatedBreachDay</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>EstimatedBreachMonth</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>EstimatedBreachYear</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>fabf91bc-3838-4ca8-99e7-74d097b769f1</rd:ReportID>
+</Report>
