@@ -1,10 +1,10 @@
-#Installation
+# Installation
 
 
-##Installation Pre-Requisites
+## Installation Pre-Requisites
 * The installation scripts assume you have created a database called CancerReporting. The "Create CancerReporting Database" script will do this, but you will need to set the path for the mdf and ldf files to the appropriate location for your environment. If you want to use a database with a different name, you'll need to change the USE statement at the beginning of each script to point at your database
 
-##SQL Database Installation instructions
+## SQL Database Installation instructions
 1. Install the schemas (in the security folder)
 1. Install the tables
 1. Run the data scripts to populate the reference data (in the Data folder)
@@ -41,7 +41,7 @@
 
 Once the jobs have been installed and start running, the SQL database should populate with your data and automatically refresh after the initial bulk load of data has happened
 
-##SQL Reporting Services Installation instructions
+## SQL Reporting Services Installation instructions
 1. Create an SSRS folder where you want your live PTL reporting and set up the appropriate security. This will be your "root" cancer PTL folder
 1. Alter the LocalConfig.fnSSRS_HyperlinkVariables so that the fields have the correct values
 1. Install the Cancer_SSRS_PTL_2016.rdl file in root cancer PTL folder with the name Cancer_SSRS_PTL_Complete
