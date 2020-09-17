@@ -2,7 +2,9 @@
 
 
 ## Installation Pre-Requisites
-* The installation scripts assume you have created a database called CancerReporting. The "Create CancerReporting Database" script will do this, but you will need to set the path for the mdf and ldf files to the appropriate location for your environment. If you want to use a database with a different name, you'll need to change the USE statement at the beginning of each script to point at your database
+The installation scripts assume you have:
+* created a database called CancerReporting. The "Create CancerReporting Database" script will do this, but you will need to set the path for the mdf and ldf files to the appropriate location for your environment. If you want to use a database with a different name, you'll need to change the USE statement at the beginning of each script to point at your database
+* a replica of your CancerRegister database in the same instance where the CancerReporting database is being installed
 
 ## SQL Database Installation instructions
 1. Install the schemas (in the security folder)
@@ -12,9 +14,6 @@
 1. Install the functions
 1. Install the views
 1. Alter the final dynamic SQL section of the LocalConfig.uspCreateReplicaViews script to point at your replica server (in the Stored Procedures folder)
-1. Search and replace the hyperlinks in SCR_Reporting.uspSSRS_PTL to point at your SCR and SSRS servers (in the Stored Procedures folder)
-	1. Replace all instances of the string https://scr.bsuh.nhs.uk with the URL for your SCR server
-	1. Replace all instances of the string 
 1. Install the stored procedures in the following order:
 	1. CancerTransactions.uspCaptureEstimatedBreach
 	1. LocalConfig.uspCreateReplicaViews
