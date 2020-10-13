@@ -1,5 +1,5 @@
 # CancerReportingSuite
-This is a Microsoft SQL - based cancer data warehouse and reporting suite, intended to complement the Somerset Cancer Registry
+This is a Microsoft SQL - based cancer data warehouse and reporting suite, intended to complement the Somerset Cancer Register
 
 ## A little bit about the reporting suite
 * This is cancer datawarehouse & reporting suite is designed for _shared development_ of reporting cancer data from the Somerset Cancer Registry
