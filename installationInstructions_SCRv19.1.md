@@ -45,11 +45,11 @@ Once the jobs have been installed and start running, the SQL database should pop
 	1. Set the connection string as: Data Source=*<your sql server>*;Initial Catalog=*<your cancer reporting database>*
 1. Create an SSRS folder where you want your live PTL reporting and set up the appropriate security. This will be your "root" cancer PTL folder
 1. Alter the LocalConfig.fnSSRS_HyperlinkVariables so that the fields have the correct values
-1. Install the Cancer_SSRS_PTL_2016.rdl file in root cancer PTL folder with the name *Cancer_SSRS_PTL_Complete*
-1. In the management page for the *Cancer_SSRS_PTL_Complete* report, set the data source to use the shared data source that you previously created
-1. Create a linked report to the Cancer_SSRS_PTL_Complete report with:
-	1. the name Cancer_SSRS_PTL_2016
-	1. the cwtPathwayType parameter set as hidden
+1. To install the main PTL report:
+	1. Install the Cancer_SSRS_PTL_2016.rdl file in root cancer PTL folder with the name *Cancer_SSRS_PTL_Complete*
+	1. In the management page for the *Cancer_SSRS_PTL_Complete* report, set the data source to use the shared data source that you previously created
+	1. In the management page for the *Cancer_SSRS_PTL_Complete* report, create a linked report with the name Cancer_SSRS_PTL_2016
+	1. In the management page for the *Cancer_SSRS_PTL_2016* linked report, set the the cwtPathwayType parameter set as hidden
 1. Install the following rdl files in the root folder with the same name as their file name
 	1. Cancer_SSRS_CommentHistory.rdl
 	1. Cancer_SSRS_NextActionHistory.rdl
