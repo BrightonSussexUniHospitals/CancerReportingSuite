@@ -1,11 +1,6 @@
-USE [CancerReporting]
-GO
-
-/****** Object:  StoredProcedure [SCR_Warehouse].[uspCreateSomersetReportingData]    Script Date: 05/10/2020 20:53:35 ******/
-SET ANSI_NULLS ON
-GO
-
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
 GO
 
 
@@ -5309,5 +5304,3 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 ************************************************************************************************************************************************************************************************************/
 
 GO
-
-
