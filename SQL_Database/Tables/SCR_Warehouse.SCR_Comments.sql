@@ -1,11 +1,11 @@
 CREATE TABLE [SCR_Warehouse].[SCR_Comments]
 (
-[SourceRecordId] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
-[SourceTableName] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
-[SourceColumnName] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
+[SourceRecordId] [varchar] (255) NOT NULL,
+[SourceTableName] [varchar] (255) NOT NULL,
+[SourceColumnName] [varchar] (255) NOT NULL,
 [CARE_ID] [int] NOT NULL,
-[Comment] [varchar] (max) COLLATE Latin1_General_CI_AS NULL,
-[CommentUser] [varchar] (50) COLLATE Latin1_General_CI_AS NULL,
+[Comment] [varchar] (max) NULL,
+[CommentUser] [varchar] (50) NULL,
 [CommentDate] [datetime] NULL,
 [CommentType] [int] NULL,
 [CareIdIx] [int] NULL,

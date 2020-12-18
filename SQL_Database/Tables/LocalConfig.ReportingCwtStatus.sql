@@ -1,7 +1,7 @@
 CREATE TABLE [LocalConfig].[ReportingCwtStatus]
 (
 [cwtStatusId] [int] NOT NULL,
-[cwtStatus] [varchar] (255) COLLATE Latin1_General_CI_AS NULL,
+[cwtStatus] [varchar] (255) NULL,
 [CwtPathwayTypeId] [int] NULL,
 [SortOrder] [int] NULL,
 [DefaultShow2WW] [bit] NULL,

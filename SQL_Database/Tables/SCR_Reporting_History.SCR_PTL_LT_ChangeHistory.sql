@@ -1,10 +1,10 @@
 CREATE TABLE [SCR_Reporting_History].[SCR_PTL_LT_ChangeHistory]
 (
 [PtlSnapshotId_Start] [int] NOT NULL,
-[CWT_ID] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
+[CWT_ID] [varchar] (255) NOT NULL,
 [FieldNameId] [int] NOT NULL,
 [FieldValueInt] [real] NULL,
-[FieldValueString] [varchar] (max) COLLATE Latin1_General_CI_AS NULL,
+[FieldValueString] [varchar] (max) NULL,
 [FieldValueDatetime] [datetime2] NULL
 ) ON [PRIMARY]
 GO

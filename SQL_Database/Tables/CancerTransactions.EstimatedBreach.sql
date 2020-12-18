@@ -1,11 +1,11 @@
 CREATE TABLE [CancerTransactions].[EstimatedBreach]
 (
 [EstimatedBreachId] [int] NOT NULL IDENTITY(1, 1),
-[CWT_ID] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
+[CWT_ID] [varchar] (255) NOT NULL,
 [EstimatedWeight] [real] NULL,
 [EstimatedBreachDate] [date] NULL,
 [CapturedDate] [datetime] NULL,
-[CapturedBy] [varchar] (255) COLLATE Latin1_General_CI_AS NULL,
+[CapturedBy] [varchar] (255) NULL,
 [CurrentRecord] [bit] NULL
 ) ON [PRIMARY]
 GO

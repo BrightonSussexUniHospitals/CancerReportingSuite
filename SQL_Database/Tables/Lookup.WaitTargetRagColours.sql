@@ -1,8 +1,8 @@
 CREATE TABLE [Lookup].[WaitTargetRagColours]
 (
 [WaitTargetRagColourId] [int] NOT NULL,
-[WaitTargetRagColourDesc] [varchar] (255) COLLATE Latin1_General_CI_AS NULL,
-[WaitTargetRagColourValue] [varchar] (255) COLLATE Latin1_General_CI_AS NULL,
+[WaitTargetRagColourDesc] [varchar] (255) NULL,
+[WaitTargetRagColourValue] [varchar] (255) NULL,
 [WaitTargetRagColourPriority] [int] NULL
 ) ON [PRIMARY]
 GO
