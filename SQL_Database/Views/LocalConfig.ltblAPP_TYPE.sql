@@ -39,5 +39,5 @@ Description:				Create a local config view to point at the place where the SCR
 
 		-- Select the whole dataset from the replica table
 		SELECT		*
-		FROM		CancerRegister_Replicated..ltblAPP_TYPE
+		FROM		[CancerRegister_Replicated_v19.01]..ltblAPP_TYPE
 GO

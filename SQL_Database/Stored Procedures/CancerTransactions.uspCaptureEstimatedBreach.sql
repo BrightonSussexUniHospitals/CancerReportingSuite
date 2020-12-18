@@ -51,34 +51,6 @@ Description:				This procedure is a data interface for the SSRS estimated breach
 
 -- EXEC CancerTransactions.uspCaptureEstimatedBreach @CWT_ID = 'Test', @EstimatedWeight = 0.5, @EstimatedBreachDate = '01 Jan 2019', @CapturedBy = 'MB_Test'
 -- SELECT * FROM CancerTransactions.EstimatedBreach
-
-		-- Create the EstimatedBreach table if it doesn't exist
-		IF OBJECT_ID('CancerTransactions.EstimatedBreach') IS NULL
-		BEGIN
-				
-				CREATE TABLE CancerTransactions.EstimatedBreach (
-						EstimatedBreachId int IDENTITY(1,1) NOT NULL
-						,CWT_ID varchar(255) NOT NULL
-						,EstimatedWeight real
-						,EstimatedBreachDate date
-						,CapturedDate datetime
-						,CapturedBy varchar(255)
-						,CurrentRecord bit
-						)
-
-		-- Create a Primary Key for the EstimatedBreach table
-		ALTER TABLE CancerTransactions.EstimatedBreach	
-		ADD CONSTRAINT PK_EstimatedBreachId PRIMARY KEY (
-				EstimatedBreachId ASC 
-				)
-				
-		-- Create an Index to join to the CWT / PTL tables
-		CREATE NONCLUSTERED INDEX Ix_EstimatedBreach ON CancerTransactions.EstimatedBreach (
-				CWT_ID ASC
-				,CurrentRecord ASC
-				)
-
-		END
 		
 		DECLARE @NewRecordId int
 

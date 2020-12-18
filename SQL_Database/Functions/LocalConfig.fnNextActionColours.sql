@@ -45,14 +45,20 @@ Description:				Return an HTML colour value based on the combination of OwnerCod
 **************************************************************************************************************************************************/
 
 -- Test me
--- Select SCR_Reporting.fnNextActionColours (12,1,1)
--- Select SCR_Reporting.fnNextActionColours (11,1,1)
--- Select SCR_Reporting.fnNextActionColours (11,2,1)
--- Select SCR_Reporting.fnNextActionColours (11,3,1)
--- Select SCR_Reporting.fnNextActionColours (11,4,1)
+-- Select LocalConfig.fnNextActionColours (12,34,1)
+-- Select LocalConfig.fnNextActionColours (11,1,1)
+-- Select LocalConfig.fnNextActionColours (11,2,1)
+-- Select LocalConfig.fnNextActionColours (11,3,1)
+-- Select LocalConfig.fnNextActionColours (11,4,1)
 
 
 BEGIN
+	
+	-- Covid / Coronavirus
+	IF @NextActionID IN (34,35)
+	OR @NextActionSpecificID IN (28,29)
+	RETURN '#FFFF00'
+
 	-- Radiology awaiting results
 	IF	@OwnerCode IN (12)
 	AND	@NextActionID IN (12)

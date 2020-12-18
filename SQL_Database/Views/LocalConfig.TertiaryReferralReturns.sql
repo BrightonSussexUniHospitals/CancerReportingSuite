@@ -2,7 +2,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-CREATE VIEW [LocalConfig].[ltblDISEASE_CLASSIFICATION_PALLIATIVE] AS
+CREATE VIEW [LocalConfig].[TertiaryReferralReturns] AS
 
 /******************************************************** © Copyright & Licensing ****************************************************************
 © 2019 Perspicacity Ltd & Brighton & Sussex University Hospitals
@@ -37,7 +37,11 @@ Description:				Create a local config view to point at the place where the SCR
 							(e.g. live vs test or from one trust to another)
 **************************************************************************************************************************************************/
 
-		-- Select the whole dataset from the replica table
-		SELECT		*
-		FROM		CancerRegister_Replicated..ltblDISEASE_CLASSIFICATION_PALLIATIVE
+		-- Select a replica dataset to mock the table that will be available in V20.1
+		SELECT		TertiaryReferralID	=	TRec.TertiaryReferralID
+					,DateReturned		=	TRec.DateReturned
+					,Comments			=	TRec.ReturnedComments
+					,PayloadID			=	CAST(NULL AS INT)
+					,AuditID			=	CAST(NULL AS INT)
+		FROM		[CancerRegister_Replicated_v19.01]..tblTERTIARY_REFERRALS_RECEIVED TRec
 GO

@@ -45,7 +45,7 @@ RETURNS varchar(5)
 AS
 BEGIN
 	-- Return the organisations ODS code
-	RETURN	'RXH'-- enter your organisation's ODS code here
+	RETURN	'RXH'
 
 END
 GO

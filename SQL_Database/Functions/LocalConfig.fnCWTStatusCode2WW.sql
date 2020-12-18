@@ -45,7 +45,8 @@ CREATE FUNCTION [LocalConfig].[fnCWTStatusCode2WW]
 	@DateFirstSeen smalldatetime,
 	@ReportDate datetime,
 	@FirstAppointmentTypeCode int,
-	@ReasonNoAppointmentCode int
+	@ReasonNoAppointmentCode int,
+	@CancerTypeCode varchar(2)
 
 	--@DeftOrgCodeTreatment varchar (5),
 	--@PatientStatusCode varchar (2),
@@ -67,6 +68,10 @@ BEGIN
 	IF		LEFT(ISNULL(@OrgCodeFirstSeen, LocalConfig.fnOdsCode()), 3) != LocalConfig.fnOdsCode()
 	AND		@cwtFlag2WW IN (0,1,2)
 	RETURN	12
+
+	-- Suspected cancer – referral to serious non-specific symptom clinic
+	IF		@CancerTypeCode = '17'
+	RETURN	55
 	
 	-- Clock stopped
 	IF		@cwtFlag2WW = 2

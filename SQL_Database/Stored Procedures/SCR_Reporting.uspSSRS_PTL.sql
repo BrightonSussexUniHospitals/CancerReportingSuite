@@ -58,6 +58,7 @@ Description:				This procedure returns the datasets for reporting the PTL in a r
 EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus = '14¿2', @CancerSite = NULL , @PathwayLengthFilterId = 3 -- test me
 */
 
+
 /************************************************************************************************************************************************************************************************************
 -- Understanding the parameters for this stored procedure
 	-- @DataSource
@@ -260,8 +261,9 @@ EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus =
 				FROM		SCR_Reporting.PTL_Live PTL WITH (NOLOCK)
 				
 				LEFT JOIN	SCR_Warehouse.Workflow wf WITH (NOLOCK)
-								ON	PTL.CWT_ID = wf.CWT_ID
+								ON	PTL.CWT_ID = wf.IdentityTypeRecordId
 								AND	wf.WorkflowID = @Workflow
+								AND	wf.IdentityTypeId = 2
 			
 				LEFT JOIN	#cwtStatus cwtStatus
 								ON	CASE	WHEN @cwtStandardId = 1
@@ -314,7 +316,7 @@ EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus =
 											AND		(EB_filter.EstimatedBreach IS NOT NULL
 											OR		ISNULL(@EstimatedBreach,'') = '') 
 										)
-								AND		(	wf.CWT_ID IS NOT NULL
+								AND		(	wf.WorkflowID IS NOT NULL
 										OR	@Workflow = 0
 										)
 								AND (PTL.ReportingPathwayLength >= plf.LowerBound OR plf.LowerBound IS NULL)
@@ -397,8 +399,9 @@ EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus =
 				FROM		SCR_Reporting.PTL_Daily PTL WITH (NOLOCK)
 				
 				LEFT JOIN	SCR_Warehouse.Workflow wf WITH (NOLOCK)
-								ON	PTL.CWT_ID = wf.CWT_ID
+								ON	PTL.CWT_ID = wf.IdentityTypeRecordId
 								AND	wf.WorkflowID = @Workflow
+								AND	wf.IdentityTypeId = 2
 			
 				LEFT JOIN	#cwtStatus cwtStatus
 								ON	PTL.DominantCWTStatusCode = cwtStatus.cwtStatusId
@@ -443,7 +446,7 @@ EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus =
 											AND		(EB_filter.EstimatedBreach IS NOT NULL
 											OR		ISNULL(@EstimatedBreach,'') = '') 
 										)
-								AND		(	wf.CWT_ID IS NOT NULL
+								AND		(	wf.WorkflowID IS NOT NULL
 										OR	@Workflow = 0
 										)
 								AND (PTL.ReportingPathwayLength >= plf.LowerBound OR plf.LowerBound IS NULL)
@@ -525,8 +528,9 @@ EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus =
 				FROM		SCR_Reporting.PTL_Daily PTL WITH (NOLOCK)
 				
 				LEFT JOIN	SCR_Warehouse.Workflow wf WITH (NOLOCK)
-								ON	PTL.CWT_ID = wf.CWT_ID
+								ON	PTL.CWT_ID = wf.IdentityTypeRecordId
 								AND	wf.WorkflowID = @Workflow
+								AND	wf.IdentityTypeId = 2
 			
 				LEFT JOIN	#cwtStatus cwtStatus
 								ON	PTL.DominantCWTStatusCode = cwtStatus.cwtStatusId
@@ -571,7 +575,7 @@ EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus =
 											AND		(EB_filter.EstimatedBreach IS NOT NULL
 											OR		ISNULL(@EstimatedBreach,'') = '') 
 										)
-								AND		(	wf.CWT_ID IS NOT NULL
+								AND		(	wf.WorkflowID IS NOT NULL
 										OR	@Workflow = 0
 										)
 								AND (PTL.ReportingPathwayLength >= plf.LowerBound OR plf.LowerBound IS NULL)
@@ -653,8 +657,9 @@ EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus =
 				FROM		SCR_Reporting.PTL_Weekly PTL WITH (NOLOCK)
 				
 				LEFT JOIN	SCR_Warehouse.Workflow wf WITH (NOLOCK)
-								ON	PTL.CWT_ID = wf.CWT_ID
+								ON	PTL.CWT_ID = wf.IdentityTypeRecordId
 								AND	wf.WorkflowID = @Workflow
+								AND	wf.IdentityTypeId = 2
 			
 				LEFT JOIN	#cwtStatus cwtStatus
 								ON	PTL.DominantCWTStatusCode = cwtStatus.cwtStatusId
@@ -699,7 +704,7 @@ EXEC SCR_Reporting.uspSSRS_PTL @DataSource = 1, @cwtStandardId = 4, @cwtStatus =
 											AND		(EB_filter.EstimatedBreach IS NOT NULL
 											OR		ISNULL(@EstimatedBreach,'') = '') 
 										)
-								AND		(	wf.CWT_ID IS NOT NULL
+								AND		(	wf.WorkflowID IS NOT NULL
 										OR	@Workflow = 0
 										)
 								AND (PTL.ReportingPathwayLength >= plf.LowerBound OR plf.LowerBound IS NULL)

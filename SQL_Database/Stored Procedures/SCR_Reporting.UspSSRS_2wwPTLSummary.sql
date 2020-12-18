@@ -91,29 +91,46 @@ SELECT		CancerSiteBS
 			,SUM(CASE WHEN CWTStatusCode2WW = 15 THEN 1 ELSE 0 END) AS [Undated2ww]
 			,SUM(CASE WHEN CWTStatusCode2WW = 15 AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') THEN 1 ELSE 0 END) AS [undated2ww_CancerSiteBS]
 
-			 --all seen (for the top right chart, which is filtered by cancer site only)                                                    
+			 --all seen OR pending (for the top right performance chart, which is filtered by cancer site only)                                                    
 			,SUM(CASE	WHEN Waitingtime2WW BETWEEN 0 AND 7 
 						AND CWTStatusCode2WW = 44  
 						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
 						THEN 1 
+						WHEN WillBeWaitingtime2WW BETWEEN 0 AND 7 
+						AND CWTStatusCode2WW = 14  
+						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
+						THEN 1
 						ELSE 0 
 						END) AS [Seen2ww_0TO7_CancerSiteBS] 
 			,SUM(CASE	WHEN Waitingtime2WW BETWEEN 8 AND 14 
 						AND CWTStatusCode2WW = 44 
 						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
 						THEN 1 
+						WHEN WillBeWaitingtime2WW BETWEEN 8 AND 14 
+						AND CWTStatusCode2WW = 14  
+						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
+						THEN 1
 						ELSE 0 
 						END) AS [Seen2ww_8TO14_CancerSiteBS]
 			,SUM(CASE	WHEN Waitingtime2WW >= 15 
-						AND CWTStatusCode2WW = 44 
+						AND CWTStatusCode2WW = 44
 						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
 						THEN 1 
+						WHEN WillBeWaitingtime2WW >=15
+						AND CWTStatusCode2WW = 14  
+						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
+						THEN 1
 						ELSE 0 
 						END) AS [Seen2ww_15Plus_CancerSiteBS] 
 			
-			-- all seen (for the top left chart, which is filtered by cancer site and month first seen)
+			-- all seen OR pending (for the top left performance chart, which is filtered by cancer site and month first seen)
 			,SUM(CASE	WHEN Waitingtime2WW BETWEEN 0 AND 7 
-						AND CWTStatusCode2WW = 44 
+						AND CWTStatusCode2WW = 44
+						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
+						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
+						THEN 1 
+						WHEN WillBeWaitingtime2WW BETWEEN 0 AND 7 
+						AND CWTStatusCode2WW = 14
 						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
 						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
 						THEN 1 
@@ -124,44 +141,70 @@ SELECT		CancerSiteBS
 						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
 						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
 						THEN 1 
+						WHEN WillBeWaitingtime2WW BETWEEN 8 AND 14 
+						AND CWTStatusCode2WW = 14
+						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
+						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
+						THEN 1 
 						ELSE 0 
 						END) AS [Seen2ww_8TO14_CancerSiteBS_MMYY]
 			,SUM(CASE	WHEN Waitingtime2WW >= 15 
-						AND CWTStatusCode2WW = 44 
+						AND CWTStatusCode2WW = 44
+						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
+						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
+						THEN 1 
+						WHEN WillBeWaitingtime2WW >= 15 
+						AND CWTStatusCode2WW = 14
 						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
 						AND (CancerSiteBS = @CancerSiteBS OR @CancerSiteBS = 'All') 
 						THEN 1 
 						ELSE 0 
 						END) AS [Seen2ww_15Plus_CancerSiteBS_MMYY]                   
 			
-			-- all seen (for the table, which is filtered by month first seen)                                
+			-- all seen OR pending (for the performance table, which is filtered by month first seen)                                
 			,SUM(CASE	WHEN Waitingtime2WW BETWEEN 0 AND 7 
-						AND CWTStatusCode2WW = 44 
+						AND CWTStatusCode2WW = 44
+						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
+						THEN 1 
+						WHEN WillBeWaitingtime2WW BETWEEN 0 AND 7 
+						AND CWTStatusCode2WW = 14
 						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
 						THEN 1 
 						ELSE 0 
 						END) AS [Seen2ww_0TO7_MMYY] 
 			,SUM(CASE	WHEN Waitingtime2WW BETWEEN 8 AND 14 
-						AND CWTStatusCode2WW = 44 
+						AND CWTStatusCode2WW = 44
+						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
+						THEN 1 
+						WHEN WillBeWaitingtime2WW BETWEEN 8 AND 14 
+						AND CWTStatusCode2WW = 14
 						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
 						THEN 1 
 						ELSE 0 
 						END) AS [Seen2ww_8TO14_MMYY]
 			,SUM(CASE	WHEN Waitingtime2WW >= 15 
-						AND CWTStatusCode2WW = 44 
+						AND CWTStatusCode2WW = 44
+						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
+						THEN 1 
+						WHEN WillBeWaitingtime2WW >= 15 
+						AND CWTStatusCode2WW = 14
 						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
 						THEN 1 
 						ELSE 0 
 						END) AS [Seen2ww_15Plus_MMYY]
 			,SUM(CASE	WHEN Waitingtime2WW BETWEEN 0 AND 14 
-						AND CWTStatusCode2WW = 44 
+						AND CWTStatusCode2WW = 44
+						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
+						THEN 1 
+						WHEN WillBeWaitingtime2WW BETWEEN 0 AND 14 
+						AND CWTStatusCode2WW = 14
 						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
 						THEN 1 
 						ELSE 0 
 						END) AS [Seen2ww_InTarget_MMYY] 
-			,SUM(CASE	WHEN CWTStatusCode2WW = 44 
+			,SUM(CASE	WHEN CWTStatusCode2WW IN (14,44)
 						AND DATEADD(MONTH, DATEDIFF(MONTH, 0, REF.DateFirstSeen), 0) = @SeenMMYY
-						THEN 1 
+						THEN 1
 						ELSE 0 
 						END) AS [Seen2ww_TotalSeen_MMYY] 
 			

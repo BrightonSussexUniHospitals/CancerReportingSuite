@@ -56,27 +56,6 @@ Description:				This procedure maintains the process of updating the ProcessAudi
 -- EXEC SCR_Warehouse.uspUpdateProcessAudit @UpdateType = 1, @Process = 'Test ProcessAudit', @Step = 'Test step' -- Run me
 -- EXEC SCR_Warehouse.uspUpdateProcessAudit @UpdateType = 2, @Process = 'Test ProcessAudit', @Step = 'Test step' -- Run me
 
-		-- Create the Process Audit table if it doesn't exist
-		IF OBJECT_ID('SCR_Warehouse.ProcessAudit') IS NULL
-		BEGIN
-
-				-- Create the Process Audit table
-				CREATE TABLE SCR_Warehouse.ProcessAudit (
-					Process varchar(255) NOT NULL
-					,Step varchar(255) NOT NULL
-					,LastStarted datetime NULL
-					,LastSuccessfullyCompleted datetime NULL
-					)
-  
-				-- Create a Primary Key for the ProcessAudit table
-				ALTER TABLE SCR_Warehouse.ProcessAudit	
-				ADD CONSTRAINT PK_ProcessAudit PRIMARY KEY (
-						Process ASC 
-						,Step ASC
-						)
-
-		END
-
 		-- Set the @StepTime to now, unless a time was specified
 		IF @StepTime IS NULL
 		SET @StepTime = GETDATE()

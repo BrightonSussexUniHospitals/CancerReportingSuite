@@ -1,0 +1,5 @@
+INSERT INTO [Lookup].[cwtFlags] ([cwtFlagID], [cwtFlagDesc]) VALUES (0, 'Closed / Excluded')
+INSERT INTO [Lookup].[cwtFlags] ([cwtFlagID], [cwtFlagDesc]) VALUES (1, 'Open')
+INSERT INTO [Lookup].[cwtFlags] ([cwtFlagID], [cwtFlagDesc]) VALUES (2, 'Reportable')
+INSERT INTO [Lookup].[cwtFlags] ([cwtFlagID], [cwtFlagDesc]) VALUES (4, 'Not Applicable')
+INSERT INTO [Lookup].[cwtFlags] ([cwtFlagID], [cwtFlagDesc]) VALUES (5, 'Error!')

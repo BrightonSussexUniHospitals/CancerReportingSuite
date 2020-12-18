@@ -18,7 +18,7 @@
       <Query>
         <DataSourceName>CancerSSRS_CancerReporting</DataSourceName>
         <CommandText>SELECT		DISTINCT ISNULL(CancerSiteBS, 'Unknown') AS CancerSiteBS
-FROM		CancerReporting.SCR_Warehouse.SCR_Referrals
+FROM		SCR_Warehouse.SCR_Referrals
 ORDER BY		ISNULL(CancerSiteBS, 'Unknown')</CommandText>
       </Query>
       <Fields>
@@ -32,7 +32,7 @@ ORDER BY		ISNULL(CancerSiteBS, 'Unknown')</CommandText>
       <Query>
         <DataSourceName>CancerSSRS_CancerReporting</DataSourceName>
         <CommandText>SELECT		*
-FROM		CancerReporting.Lookup.cwtStandards</CommandText>
+FROM		Lookup.cwtStandards</CommandText>
       </Query>
       <Fields>
         <Field Name="cwtStandardId">
@@ -118,7 +118,7 @@ FROM		CancerReporting.Lookup.cwtStandards</CommandText>
          ,CASE WHEN [cwtTypeID] = 7 THEN '62 Day Standard' ELSE [cwtTypeDesc] 
          END AS  [cwtTypeDesc]
 
-FROM [CancerReporting].[Lookup].[cwtTypes]
+FROM [Lookup].[cwtTypes]
 WHERE [cwtStandardId] = 4</CommandText>
       </Query>
       <Fields>
@@ -137,7 +137,7 @@ WHERE [cwtStandardId] = 4</CommandText>
         <DataSourceName>CancerSSRS_CancerReporting</DataSourceName>
         <CommandText>SELECT	CAST(CwtPathwayTypeId AS int) AS CwtPathwayTypeId
 	,CwtPathwayTypeDesc
-FROM	CancerReporting.LocalConfig.ReportingCwtPathwayType
+FROM	LocalConfig.ReportingCwtPathwayType
 ORDER BY	SortOrder</CommandText>
       </Query>
       <Fields>
@@ -155,7 +155,7 @@ ORDER BY	SortOrder</CommandText>
       <Query>
         <DataSourceName>CancerSSRS_CancerReporting</DataSourceName>
         <CommandText>SELECT	*
-FROM	CancerReporting.LocalConfig.ReportingCwtPathwayType
+FROM	LocalConfig.ReportingCwtPathwayType
 WHERE	DefaultShow = 1</CommandText>
       </Query>
       <Fields>
@@ -184,7 +184,7 @@ WHERE	DefaultShow = 1</CommandText>
 Escalate as ID
 ,CASE WHEN Escalate = 1 then 'Escalated' ELSE 'Not Escalated' END AS Description
 
-FROM [CancerRegister_Replicated].[dbo].[tblPathwayUpdateEvents]
+FROM [LocalConfig].[tblPathwayUpdateEvents]
 
 GROUP BY 
 
@@ -297,7 +297,7 @@ UNION ALL
 
 SELECT [ID]
       ,[Description]  
-  FROM [CancerRegister_Replicated].[dbo].[ltblNextAction]
+  FROM [LocalConfig].[ltblNextAction]
   WHERE [IsDeleted] = 0</CommandText>
       </Query>
       <Fields>
@@ -322,7 +322,7 @@ UNION ALL
 
 SELECT [ID]
       ,[Description]  
-  FROM [CancerRegister_Replicated].[dbo].[ltblOwner]
+  FROM [LocalConfig].[ltblOwner]
   WHERE [IsDeleted] = 0</CommandText>
       </Query>
       <Fields>
@@ -347,7 +347,7 @@ UNION ALL
 
 SELECT [ID]
       ,[Description]  
-  FROM [CancerRegister_Replicated].[dbo].ltblNextActionSpecific
+  FROM [LocalConfig].ltblNextActionSpecific
   WHERE [IsDeleted] = 0</CommandText>
       </Query>
       <Fields>
@@ -367,7 +367,7 @@ SELECT [ID]
         <CommandText>SELECT		CWT_ID
 			,TargetType + ': ' + CONVERT(varchar(255), TargetDate, 103) AS NextFutureOpenGroupTargetDates
 			,TargetType + ': ' + CONVERT(varchar(255), BreachDate, 103) AS NextFutureOpenGroupBreachDates
-FROM		CancerReporting.SCR_Warehouse.OpenTargetDates
+FROM		SCR_Warehouse.OpenTargetDates
 WHERE		IxNextFutureOpenGroupBreachDate = 1
 ORDER BY	CWT_ID ASC
 			,WaitTargetGroupDesc</CommandText>
@@ -420,8 +420,7 @@ SELECT NULL, NULL, NULL, NULL</CommandText>
       <Query>
         <DataSourceName>CancerSSRS_CancerReporting</DataSourceName>
         <CommandText>SELECT		MAX(RefreshMaxActionDate) AS RefreshMaxActionDate
-FROM		CancerReporting.SCR_Warehouse.SCR_Referrals
-</CommandText>
+FROM		SCR_Warehouse.SCR_Referrals</CommandText>
       </Query>
       <Fields>
         <Field Name="RefreshMaxActionDate">
@@ -611,7 +610,7 @@ FROM		CancerReporting.SCR_Warehouse.SCR_Referrals
       <Query>
         <DataSourceName>CancerSSRS_CancerReporting</DataSourceName>
         <CommandText>SELECT		*
-FROM		CancerReporting.LocalConfig.ReportingWorkflows
+FROM		LocalConfig.ReportingWorkflows
 ORDER BY		WorkflowSortOrder</CommandText>
       </Query>
       <Fields>
@@ -1656,7 +1655,7 @@ window.alert(""You must enter a breach weight"");
 return;
 }
 
-url = """ + First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") + Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%2f") + "%2fRun%20uspCaptureEstimatedBreach&amp;CWT_ID=" + Fields!CWT_ID.Value + """;
+url = """ + First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") + Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%20") + "%2fRun%20uspCaptureEstimatedBreach&amp;CWT_ID=" + Fields!CWT_ID.Value + """;
 url = url + ""&amp;EstimatedWeight="" + inputRadioValue;
 url = url + ""&amp;EstimatedBreachDay="" + inputBreachDate.substring(0,2);
 url = url + ""&amp;EstimatedBreachMonth="" + inputBreachDate.substring(3,5);
@@ -1799,7 +1798,7 @@ window.alert(""You must enter a breach weight"");
 return;
 }
 
-url = """ + First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") + Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%2f") + "%2fRun%20uspCaptureEstimatedBreach&amp;CWT_ID=" + Fields!CWT_ID.Value + """;
+url = """ + First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") + Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%20") + "%2fRun%20uspCaptureEstimatedBreach&amp;CWT_ID=" + Fields!CWT_ID.Value + """;
 url = url + ""&amp;EstimatedWeight="" + inputRadioValue;
 url = url + ""&amp;EstimatedBreachDay="" + inputBreachDate.substring(0,2);
 url = url + ""&amp;EstimatedBreachMonth="" + inputBreachDate.substring(3,5);
@@ -1939,7 +1938,7 @@ window.alert(""You must enter a breach weight"");
 return;
 }
 
-url = """ + First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") + Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%2f") + "%2fRun%20uspCaptureEstimatedBreach&amp;CWT_ID=" + Fields!CWT_ID.Value + """;
+url = """ + First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") + Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%20") + "%2fRun%20uspCaptureEstimatedBreach&amp;CWT_ID=" + Fields!CWT_ID.Value + """;
 url = url + ""&amp;EstimatedWeight="" + inputRadioValue;
 url = url + ""&amp;EstimatedBreachDay="" + inputBreachDate.substring(0,2);
 url = url + ""&amp;EstimatedBreachMonth="" + inputBreachDate.substring(3,5);
@@ -2039,7 +2038,7 @@ newWindow.document.write(newContent);"</Hyperlink>
                                   <ActionInfo>
                                     <Actions>
                                       <Action>
-                                        <Hyperlink>="javascript:void(window.open('"&amp;First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") &amp; Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%2f") &amp; "%2fCancer_SSRS_CommentHistory&amp;CareId="&amp; Fields!CARE_ID.Value &amp; Iif(Parameters!Anonymised.Value = 1,"&amp;Anonymised=1","") &amp; "&amp;rc:Toolbar=false', '_blank','status,height=600,width=800,scrollbars=1'))"</Hyperlink>
+                                        <Hyperlink>="javascript:void(window.open('"&amp;First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") &amp; Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%20") &amp; "%2fCancer_SSRS_CommentHistory&amp;CareId="&amp; Fields!CARE_ID.Value &amp; Iif(Parameters!Anonymised.Value = 1,"&amp;Anonymised=1","") &amp; "&amp;rc:Toolbar=false', '_blank','status,height=600,width=800,scrollbars=1'))"</Hyperlink>
                                       </Action>
                                     </Actions>
                                   </ActionInfo>
@@ -2159,7 +2158,7 @@ newWindow.document.write(newContent);"</Hyperlink>
                                   <ActionInfo>
                                     <Actions>
                                       <Action>
-                                        <Hyperlink>="javascript:void(window.open('"&amp;First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") &amp; Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%2f") &amp; "%2fCancer_SSRS_NextActionHistory&amp;CareId="&amp; Fields!CARE_ID.Value &amp; Iif(Parameters!Anonymised.Value = 1,"&amp;Anonymised=1","") &amp; "&amp;rc:Toolbar=false', '_blank','status,height=600,width=800,scrollbars=1'))"</Hyperlink>
+                                        <Hyperlink>="javascript:void(window.open('"&amp;First(Fields!ReportViewerUrl.Value, "fnSSRS_HyperlinkVariables") &amp; Replace(Replace(First(Fields!RootPtlFolder.Value, "fnSSRS_HyperlinkVariables"), "/", "%2f"), " ", "%20") &amp; "%2fCancer_SSRS_NextActionHistory&amp;CareId="&amp; Fields!CARE_ID.Value &amp; Iif(Parameters!Anonymised.Value = 1,"&amp;Anonymised=1","") &amp; "&amp;rc:Toolbar=false', '_blank','status,height=600,width=800,scrollbars=1'))"</Hyperlink>
                                       </Action>
                                     </Actions>
                                   </ActionInfo>

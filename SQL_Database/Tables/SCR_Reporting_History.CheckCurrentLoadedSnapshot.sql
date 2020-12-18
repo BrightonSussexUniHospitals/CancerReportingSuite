@@ -26,6 +26,7 @@ CREATE TABLE [SCR_Reporting_History].[CheckCurrentLoadedSnapshot]
 [CWTStatusCode31] [real] NULL,
 [SourceReferralCode] [varchar] (max) COLLATE Latin1_General_CI_AS NULL,
 [CWTStatusCode62] [real] NULL,
+[FDPlannedInterval] [real] NULL,
 [ReferralMethodCode] [real] NULL,
 [DecisionToReferDate] [datetime2] NULL,
 [TumourStatusCode] [varchar] (max) COLLATE Latin1_General_CI_AS NULL,

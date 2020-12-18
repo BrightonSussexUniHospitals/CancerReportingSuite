@@ -30,6 +30,7 @@ CREATE TABLE [LocalConfig].[SCR_PTL_StatisticsDimensionGroups]
 [FastDiagOtherCommMethod] [varchar] (50) COLLATE Latin1_General_CI_AS NULL,
 [FastDiagInformingCareProfID] [int] NULL,
 [FastDiagOtherCareProf] [varchar] (50) COLLATE Latin1_General_CI_AS NULL,
+[FDPlannedInterval] [bit] NULL,
 [AgeAtDiagnosis] [varchar] (5) COLLATE Latin1_General_CI_AS NULL,
 [DiagnosisSubCode] [varchar] (5) COLLATE Latin1_General_CI_AS NULL,
 [OrgIdDiagnosis] [int] NULL,

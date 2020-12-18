@@ -68,27 +68,6 @@ SELECT * FROM SCR_Warehouse.ProcessAuditHistory WHERE ProcessAuditHistoryId = @P
 		-- Set up the @PahInserted tablevar to capture the inserted process audit history ID
 		DECLARE @PahInserted TABLE (ProcessAuditHistoryId int)
 		
-		-- Create the Process Audit History table if it doesn't exist
-		IF OBJECT_ID('SCR_Warehouse.ProcessAuditHistory') IS NULL
-		BEGIN
-
-				-- Create the Process Audit History table
-				CREATE TABLE SCR_Warehouse.ProcessAuditHistory (
-					ProcessAuditHistoryId int NOT NULL IDENTITY(1,1)
-					,Process varchar(255) NOT NULL
-					,Step varchar(255) NOT NULL
-					,LastStarted datetime NULL
-					,LastSuccessfullyCompleted datetime NULL
-					)
-  
-				-- Create a Primary Key for the ProcessAuditHistory table
-				ALTER TABLE SCR_Warehouse.ProcessAuditHistory	
-				ADD CONSTRAINT PK_ProcessAuditHistory PRIMARY KEY (
-						ProcessAuditHistoryId ASC
-						)
-
-		END
-
 		-- Set the @StepTime to now, unless a time was specified
 		IF @StepTime IS NULL
 		SET @StepTime = GETDATE()

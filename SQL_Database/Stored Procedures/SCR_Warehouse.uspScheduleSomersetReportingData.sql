@@ -97,18 +97,10 @@ Description:				This procedure contains the logic to decide which parameters sho
 -- Run the 05:00 daily snapshot and PtlHistory if it hasn't already run
 /******************************************************************************************************************************************************************************/
 
-		IF	ISNULL((SELECT		LastSuccessfullyCompleted 
-			FROM		SCR_Warehouse.ProcessAudit 
-			WHERE		Process = 'SCR_Reporting_History.uspCreateSomersetReportingHistory' 
-			AND			Step = 'Insert PTL History'), CAST('01 Jan 1900' AS datetime))					-- the most recent successful insertion into the history table
-																										-- (Taken from the ProcessAudit table as the PtlHistory table takes a long time to query)
+		IF	(ISNULL((SELECT		MAX(PtlSnapshotDate)
+			FROM		SCR_Reporting_History.SCR_PTL_SnapshotDates), CAST('01 Jan 1900' AS datetime))	-- the most recent successful insertion into the history table
 			< DATEADD(hh, 5, CAST(CAST(GETDATE() AS date) AS datetime))									-- earlier than 05:00 this morning
-		AND	GETDATE() >= DATEADD(hh, 5, CAST(CAST(GETDATE() AS date) AS datetime))						-- It is now after 05:00 this morning
-		AND (SELECT		COUNT(*) 
-			FROM		SCR_Reporting.PTL_Weekly 
-			WHERE		PtlSnapshotDate >= 
-						DATEADD(wk, DATEDIFF(wk, 0, DATEADD(DAY,-1,GETDATE())), 0)
-			) > 0																						-- There are records in PTL_Weekly that have a snapshot date since this Monday
+		AND	GETDATE() >= DATEADD(hh, 5, CAST(CAST(GETDATE() AS date) AS datetime)))						-- It is now after 05:00 this morning
 		BEGIN
 			
 			SET @StepName = '05:00 daily snapshot and PtlHistory on ' + @ActiveClusterNode
@@ -217,6 +209,5 @@ ProcedureClose:
 					END
 
 		EXEC SCR_Warehouse.uspUpdateProcessAuditHistory @ProcessAuditHistoryId = @pahId, @Process = 'uspScheduleSomersetReportingData', @Step = @StepName
-
 
 GO

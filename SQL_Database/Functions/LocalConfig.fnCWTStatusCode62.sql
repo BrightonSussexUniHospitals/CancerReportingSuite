@@ -53,7 +53,9 @@ CREATE FUNCTION [LocalConfig].[fnCWTStatusCode62]
 	@ReportDate datetime,
 	@FirstAppointmentTypeCode int,
 	@DateReceipt smalldatetime,
-	@CancerSite varchar(50)
+	@CancerSite varchar(50),
+	@CancerTypeCode varchar(2),
+	@cwtFlag28 int
 )
 
 RETURNS int
@@ -65,9 +67,18 @@ BEGIN
 	AND		LEFT(ISNULL(@DeftOrgCodeTreatment, LocalConfig.fnOdsCode()), 3) != LocalConfig.fnOdsCode()
 	RETURN	12
 	
+	-- No Cancer, but patient not informed (FDS is still open)
+	IF		@PatientStatusCode IN (3)
+	AND		@cwtFlag28&1 = 1		-- pathway is still open -- NB: this means that the first bit is = 1 and could also be written as @cwtFlag28 IN (1,5) - try SELECT 1&1, 2&1, 4&1, 5&1, 3&2, 5&2, 6&2, 7&5 to see how this works
+	RETURN	56
+	
 	-- No Cancer
 	IF		@PatientStatusCode IN (3)
 	RETURN	2
+
+	-- Suspected cancer – referral to serious non-specific symptom clinic
+	IF		@CancerTypeCode = '17'
+	RETURN	55
 
 	-- Diagnosed Dated or Treated
 	IF		@cwtFlag62 = 2 -- reportable

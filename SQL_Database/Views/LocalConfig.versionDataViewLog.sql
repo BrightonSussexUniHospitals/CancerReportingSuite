@@ -2,7 +2,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-CREATE VIEW [LocalConfig].[Organisations] AS
+CREATE VIEW [LocalConfig].[versionDataViewLog] AS
 
 /******************************************************** © Copyright & Licensing ****************************************************************
 © 2019 Perspicacity Ltd & Brighton & Sussex University Hospitals
@@ -39,5 +39,5 @@ Description:				Create a local config view to point at the place where the SCR
 
 		-- Select the whole dataset from the replica table
 		SELECT		*
-		FROM		CancerRegister_Replicated..Organisations
+		FROM		[CancerRegister_Replicated_v19.01]..versionDataViewLog
 GO

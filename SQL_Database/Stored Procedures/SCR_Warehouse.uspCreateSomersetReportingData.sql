@@ -9,6 +9,7 @@ GO
 
 
 
+
 CREATE PROCEDURE [SCR_Warehouse].[uspCreateSomersetReportingData] 
 		(@IncrementalUpdate bit = 0
 		,@UpdatePtlSnapshots int = 0
@@ -18,7 +19,7 @@ AS
 PRINT CAST(@IncrementalUpdate AS varchar(255)) + ' @IncrementalUpdate value'
 PRINT CAST(@UpdatePtlSnapshots AS varchar(255)) + ' @UpdatePtlSnapshots value'
 
--- EXEC SCR_Warehouse.uspCreateSomersetReportingData @IncrementalUpdate = 1, @UpdatePtlSnapshots = 0 -- Run Me
+-- EXEC SCR_Warehouse.uspCreateSomersetReportingData @IncrementalUpdate = 0, @UpdatePtlSnapshots = 0 -- Run Me
 
 /******************************************************** © Copyright & Licensing ****************************************************************
 © 2019 Perspicacity Ltd & Brighton & Sussex University Hospitals
@@ -73,6 +74,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 
 ************************************************************************************************************************************************************************************************************/
 
+
 /************************************************************************************************************************************************************************************************************
 -- Procedure:		uspCreateSomersetReportingData
 -- Author(s):		Lawrence Simpson & Matthew Bishop
@@ -96,7 +98,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 			CARE_ID int NOT NULL,
 			PatientPathwayID varchar(20) NULL,
 			PatientPathwayIdIssuer varchar(3) NULL,
-			PATIENT_ID int NULL DEFAULT 0,				-- Internal patient ID
+			PATIENT_ID int NULL CONSTRAINT DF_PatID_SCR_Referrals_work DEFAULT 0,				-- Internal patient ID
 			MainRefActionId int NULL,					-- audit trail action ID from the tblMainReferrals table
 			DiagnosisActionId int NULL,					-- audit trail action ID from the tblMainReferrals table (for the diagnosis portion of the referrals table)
 			DemographicsActionId int NULL,				-- audit trail action ID from the tblDEMOGRAPHICS table	
@@ -176,6 +178,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 			FastDiagInformingCareProfCode varchar(3) NULL,	-- ltblCareProfessional.DataDictionaryCode
 			FastDiagInformingCareProfDesc varchar(70) NULL,	-- ltblCareProfessional.Description
 			FastDiagOtherCareProf varchar(50) NULL,		-- tblMAIN_REFERRALS.FasterDiagnosisOtherCareProfessional
+			FDPlannedInterval bit NULL,					-- tblMAIN_REFERRALS.FDPlannedInterval
 			-- Diagnoses
 			DateDiagnosis smalldatetime NULL,			-- N4_1_DIAGNOSIS_DATE
 			AgeAtDiagnosis int NULL,
@@ -240,8 +243,8 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 			CWTInsertIx int NOT NULL IDENTITY(1,1),		-- An identity field to provide us with an initial primary key and provide a reference to the order records were inserted (autonumber)
 			OriginalCWTInsertIx int NULL,				-- A record of the CWTInsertIx used in processing incremental records before we append to the SCR_CWT table
 			CARE_ID int NOT NULL,
-			CWT_ID varchar(255) NOT NULL DEFAULT '',	-- Composite Key for the CWT record (careid, treatmentid, all modality ids)
-			Tx_ID varchar(255) NOT NULL DEFAULT '',		-- Composite Key for the modality specific treatment (careid, all modality ids)
+			CWT_ID varchar(255) NOT NULL CONSTRAINT DF_CWT_ID_SCR_CWT_work DEFAULT '',	-- Composite Key for the CWT record (careid, treatmentid, all modality ids)
+			Tx_ID varchar(255) NOT NULL CONSTRAINT DF_Tx_ID_SCR_CWT_work DEFAULT '',		-- Composite Key for the modality specific treatment (careid, all modality ids)
 			TREATMENT_ID int NULL,						-- CWT record ID
 			TREAT_ID int NULL,							-- CWT record link to modality specific Treatment ID
 			CHEMO_ID int NULL,							-- modality specific Treatment ID from the tblMAIN_CHEMOTHERAPY table
@@ -330,8 +333,8 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 			cwtReason28  int NULL,									-- The component of the CWT flag setting case statment that was true for the CWT flag to have ended up with it's current value
 			cwtReason31  int NULL,									-- The component of the CWT flag setting case statment that was true for the CWT flag to have ended up with it's current value
 			cwtReason62  int NULL,									-- The component of the CWT flag setting case statment that was true for the CWT flag to have ended up with it's current value	
-			HasTxMod int NULL DEFAULT 0,							-- Flags the presence of the Treatment Modality (TxMod) Record (1 = updated as a part of an existing DEFT record, 2 = inserted because there was no DEFT record)
-			HasChemRtLink int NULL DEFAULT 0,						-- Flags the presence of the ChemoRT-linked Treatment Modality (TxMod) Record (1 = updated as a part of an existing DEFT record, 2 = inserted because there was no DEFT record)	
+			HasTxMod int NULL CONSTRAINT DF_HasTxMod_SCR_CWT_work DEFAULT 0,			-- Flags the presence of the Treatment Modality (TxMod) Record (1 = updated as a part of an existing DEFT record, 2 = inserted because there was no DEFT record)
+			HasChemRtLink int NULL CONSTRAINT DF_HasChemRtLink_SCR_CWT_work DEFAULT 0,	-- Flags the presence of the ChemoRT-linked Treatment Modality (TxMod) Record (1 = updated as a part of an existing DEFT record, 2 = inserted because there was no DEFT record)	
 			-- CWT Wait Calculations
 			ClockStartDate2WW smalldatetime NULL,
 			ClockStartDate28 smalldatetime NULL,
@@ -561,6 +564,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 					,FastDiagOtherCommMethod
 					,FastDiagInformingCareProfID
 					,FastDiagOtherCareProf
+					,FDPlannedInterval
 					,DateDiagnosis
 					,DiagnosisCode
 					,DiagnosisSubCode
@@ -631,6 +635,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 					,FastDiagOtherCommMethod		=	mainref.FasterDiagnosisOtherCommunicationMethod
 					,FastDiagInformingCareProfID	=	mainref.FasterDiagnosisInformingCareProfessionalID
 					,FastDiagOtherCareProf			=	mainref.FasterDiagnosisOtherCareProfessional
+					,FDPlannedInterval				=	mainref.FDPlannedInterval
 					,DateDiagnosis					=	mainref.N4_1_DIAGNOSIS_DATE 
 					,DiagnosisCode					=	CASE WHEN mainref.L_Diagnosis = '' THEN CAST(NULL AS varchar(255)) ELSE mainref.L_Diagnosis END
 					,DiagnosisSubCode				=	CASE WHEN mainref.N4_2_DIAGNOSIS_CODE = '' THEN CAST(NULL AS varchar(255)) ELSE mainref.N4_2_DIAGNOSIS_CODE END
@@ -918,10 +923,10 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 						AND	CWT.CARE_ID = Tx.CARE_ID
 		LEFT JOIN	#Incremental Inc
 						ON	Tx.CARE_ID = Inc.CARE_ID
-		WHERE		(Inc.CARE_ID IS NOT NULL										-- The record is in the incremental dataset
-		OR			Tx.CARE_ID IS NULL												-- We are unable to determine whether the record is in the incremental dataset
-		OR			@IncrementalUpdate = 0)											-- We are doing a bulk load (in which case we should ignore the incremental dataset)
-		AND			CWT.DeftTreatmentCode IN ('01','10','11','12','16','17','20')	-- codes from ltblDEFINITIVE_TYPE that represent Surgery
+		WHERE		(Inc.CARE_ID IS NOT NULL											-- The record is in the incremental dataset
+		OR			Tx.CARE_ID IS NULL													-- We are unable to determine whether the record is in the incremental dataset
+		OR			@IncrementalUpdate = 0)												-- We are doing a bulk load (in which case we should ignore the incremental dataset)
+		AND			CWT.DeftTreatmentCode IN ('01','10','11','12','16','17','20','23','24')	-- codes from ltblDEFINITIVE_TYPE that represent Surgery
 
 
 		-- Update the MONITOR_ID column and TxMod columns where there is a corresponding record in tblMONITORING
@@ -1458,7 +1463,9 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 														ABS(DATEDIFF(MINUTE, cat.Inserted, rat.Inserted)) ASC,													-- How many minutes between the creation of the radio record we are looking to link as an adjunctive treatment and the chemo record we are linking to
 														ISNULL(rat.N_CHEMORADIO,0) DESC,																		-- Prioritise where the radio record is marked as ChemoRT
 														ABS(DATEDIFF(MINUTE, cat.StartDate, rat.StartDate)) ASC,												-- How many minutes between the StartDate of the radio record we are looking to link as an adjunctive treatment and the chemo record we are linking to
-														ABS(DATEDIFF(MINUTE, cat.EndDate, rat.EndDate)) ASC														-- How many minutes between the EndDate of the radio record we are looking to link as an adjunctive treatment and the chemo record we are linking to
+														ABS(DATEDIFF(MINUTE, cat.EndDate, rat.EndDate)) ASC,													-- How many minutes between the EndDate of the radio record we are looking to link as an adjunctive treatment and the chemo record we are linking to
+														cat.LastUpdated,																						-- Which record was most recently updated
+														cat.ACTION_ID																							-- Which record was created first
 										) AS RadioLinkOrder
 					,rat.TELE_ID
 					,cat.CHEMO_ID
@@ -1515,7 +1522,9 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 														ABS(DATEDIFF(MINUTE, rat.Inserted, cat.Inserted)) ASC,													-- How many minutes between the creation of the chemo record we are looking to link as an adjunctive treatment and the radio record we are linking to
 														ISNULL(cat.N_CHEMORADIO,0) DESC,																		-- Prioritise where the chemo record is marked as ChemoRT
 														ABS(DATEDIFF(MINUTE, rat.StartDate, cat.StartDate)) ASC,												-- How many minutes between the StartDate of the chemo record we are looking to link as an adjunctive treatment and the radio record we are linking to
-														ABS(DATEDIFF(MINUTE, rat.EndDate, cat.EndDate)) ASC														-- How many minutes between the EndDate of the chemo record we are looking to link as an adjunctive treatment and the radio record we are linking to
+														ABS(DATEDIFF(MINUTE, rat.EndDate, cat.EndDate)) ASC,													-- How many minutes between the EndDate of the chemo record we are looking to link as an adjunctive treatment and the radio record we are linking to
+														rat.LastUpdated,																						-- Which record was most recently updated
+														rat.ACTION_ID																							-- Which record was created first
 										) AS ChemoLinkOrder
 					,cat.CHEMO_ID
 					,rat.TELE_ID
@@ -1982,15 +1991,19 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 							THEN 3 -- Excluded
 							WHEN IsCwtCancerDiagnosis = 0 AND FastDiagInformedDate IS NOT NULL 
 							THEN 2 -- Ruled out
-							WHEN Referrals.PatientStatusCode = '03' AND FastDiagInformedDate IS NOT NULL	-- No new cancer diagnosis identified
+							WHEN PatientStatusCodeCwt = '03' AND FastDiagInformedDate IS NOT NULL AND FDPlannedInterval = 1	-- No new cancer diagnosis identified
+							THEN 4 -- Interval Scan
+							WHEN TumourStatusCode = 3 AND FastDiagInformedDate IS NOT NULL AND FDPlannedInterval = 1		-- Non-cancer tumour status
+							THEN 4 -- Interval Scan
+							WHEN PatientStatusCodeCwt = '03' AND FastDiagInformedDate IS NOT NULL	-- No new cancer diagnosis identified
 							THEN 2 -- Ruled out
-							WHEN Referrals.TumourStatusCode = 3 AND FastDiagInformedDate IS NOT NULL		-- Non-cancer tumour status
+							WHEN TumourStatusCode = 3 AND FastDiagInformedDate IS NOT NULL		-- Non-cancer tumour status
 							THEN 2 -- Ruled out
 							WHEN FastDiagCancerSiteID IS NOT NULL -- Cancer with site
 							THEN 1 -- Diagnosis of Cancer
 							WHEN SnomedCT_ID IN (597, 725) -- Neuroendocrine
 							THEN 1 -- Diagnosis of Cancer
-							WHEN LEFT(Referrals.DiagnosisSubCode, 3) = 'C17' --Can't tell if this is colo or UGI, but it is a cancer
+							WHEN LEFT(DiagnosisSubCode, 3) = 'C17' --Can't tell if this is colo or UGI, but it is a cancer
 							THEN 1 -- Diagnosis of Cancer
 							ELSE CAST(NULL AS int)
 					END
@@ -2327,8 +2340,8 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 											-- Diagnosis of new cancer confirmed - no NHS funded treatment planned
 											WHEN	Referrals.PatientStatusCode = '07'			-- Diagnosis of new cancer confirmed - no NHS funded treatment planned
 											THEN	11	-- 0, Closed
-											-- Tumour status of Recurrence or Metastasis
-											WHEN	Referrals.TumourStatusCode IN (4, 5)		-- Tumour status of Recurrence or Metastasis
+											-- Tumour status of Recurrence / Metastases / Progression / Transformation
+											WHEN	Referrals.TumourStatusCode IN (4, 5, 10, 12)-- Recurrence / Metastases / Progression / Transformation -- 2020.11.17 MB Added with V20.1 as this implemented CWT dataset v2.1 / guidance V11
 											THEN	12	-- 0, Closed					
 											
 													/*************** Do Open Pathway Reasons (including subcategories of open pathways) next ***************/
@@ -2347,7 +2360,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		--AND			Referrals.DateConsultantUpgrade IS NULL									-- Not an upgrade
 		--AND			ISNULL(Referrals.SourceReferralCode,0) != 17							-- Not a screening 2WW referral
 		AND			ISNULL(CWT.DeftDefinitiveTreatment, 1) = 1									-- Not Subsequent / Multiple Diagnosis / Incidental Finding
-
+		--AND			ISNULL(Referrals.CancerTypeCode, 0) != 17									-- Not a cancer referral for non-specific symptoms (2020.11.16 MB Added as a comment ready to compensate for new exclusion under guidance v11)
 
 		-- Update 2WW flags from the cwtReasonID, or mark as not applicable is there is no cwtReason
 		UPDATE		CWT
@@ -2389,24 +2402,31 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 											AND		Referrals.PatientStatusCode = '07'			-- Diagnosis of new cancer confirmed - no NHS funded treatment planned
 											THEN	11	-- 0, Closed	
 											
-											-- Tumour status of Recurrence or Metastasis
+											-- Tumour status of Recurrence / Metastases / Progression / Transformation
 											WHEN	Referrals.DateFirstSeen IS NULL				-- No first appointment date
-											AND		Referrals.TumourStatusCode IN (4, 5)		-- Tumour status of Recurrence or Metastasis
-											THEN	12	-- 0, Closed
-											
-													/*************** Do Reportable Pathway Reasons next ***************/	
+											AND		Referrals.TumourStatusCode IN (4, 5, 10, 12)-- Recurrence / Metastases / Progression / Transformation -- 2020.11.17 MB Added with V20.1 as this implemented CWT dataset v2.1 / guidance V11
+											THEN	12	-- 0, Closed		
 													
 											-- Excluded from 28 Day Pathway
 											WHEN	Referrals.FastDiagEndReasonID = 3
-											THEN	14	-- 2, Reportable
+											THEN	14	-- 0, Closed	
+											
+													/*************** Do Reportable Pathway Reasons next ***************/
 											
 											-- Patient Informed - Diagnosis of Cancer
 											WHEN	Referrals.FastDiagEndReasonID = 1
+											AND		Referrals.FastDiagInformedDate IS NOT NULL
 											THEN	15	-- 2, Reportable
 
 											-- Patient Informed - Ruling out of Cancer
 											WHEN	Referrals.FastDiagEndReasonID = 2
-											THEN	16	-- 2, Reportable					
+											AND		Referrals.FastDiagInformedDate IS NOT NULL
+											THEN	16	-- 2, Reportable	
+
+											-- Patient Informed - Interval Scan
+											WHEN	Referrals.FastDiagEndReasonID = 4
+											AND		Referrals.FastDiagInformedDate IS NOT NULL
+											THEN	17	-- 2, Reportable					
 											
 													/*************** Do Closed Pathway Reasons (where you only want them closed if there isn't a reportable reason) next ***************/ --!!! NB !!! Add these reasons to DQ query 74: Patients who will appear on the CWT, but won't be on the PTL
 
@@ -2423,11 +2443,13 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		WHERE		(Referrals.PriorityTypeCode = '03'											-- 2WW urgency
 		OR			ISNULL(Referrals.CancerTypeCode, 0) = 16									-- Symptomatic Breast Referral
 		OR			(ISNULL(Referrals.SourceReferralCode,0) = 17								-- Urgent Screening Referral
-		AND			Referrals.PriorityTypeCode = '02')											-- Urgent Screening Referral
+		AND			Referrals.PriorityTypeCode = '02'))											-- Urgent Screening Referral
 		--AND			Referrals.DateConsultantUpgrade IS NULL										-- Not an upgrade
 		AND			ISNULL(CWT.DeftDefinitiveTreatment, 1) = 1									-- Not Subsequent / Multiple Diagnosis / Incidental Finding
+		AND			(Referrals.DateReceipt >= '01 Apr 2019'										-- Faster diagnosis only applies to pathways referred after April 2019
+		OR			Referrals.DateReceipt IS NULL)
 
-		)
+		
 
 		-- Update Faster Diagnosis (28 day) flag from the cwtReasonID, or mark as not applicable is there is no cwtReason
 		UPDATE		CWT
@@ -2492,15 +2514,19 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 											-- Diagnosed as non-CWT type of cancer
 											WHEN	Referrals.IsCwtCancerDiagnosis = 0
 											THEN	6	-- 0, Closed							
-											-- Diagnosed as Recurrence / Metastases
-											WHEN	Referrals.TumourStatusCode IN (4, 5)		-- Recurrence / Metastases
-											OR		Referrals.PatientStatusCode IN ('15','16','17','18','19','20')	-- Not Recurrence / Subsequent
-											THEN	7	-- 0, Closed				
+											-- Diagnosed as Recurrence / Metastases / Progression / Transformation
+											WHEN	Referrals.TumourStatusCode IN (4, 5, 10, 12)		-- Recurrence / Metastases / Progression / Transformation -- 2020.11.17 MB Added with V20.1 as this implemented CWT dataset v2.1 / guidance V11
+											OR		Referrals.PatientStatusCode IN ('15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36')	-- Not Recurrence / Subsequent / Progression / Transformation -- 2020.11.17 MB Added with V20.1 as this implemented CWT dataset v2.1 / guidance V11
+											THEN	7	-- 0, Closed	
+											---- All treatment declined -- 2020.11.16 MB Added as a comment - do we want to be excluding "All treatment declined" from the PTL?
+											--WHEN	CWT.DeftTreatmentCode = '98'
+											--THEN	???	-- 0, Closed
 											
 													/*************** Do Reportable Pathway Reasons next ***************/
 											-- Treated
 											WHEN	Referrals.IsCwtCancerDiagnosis = 1			-- Diagnosed
 											AND		CWT.DeftDateTreatment IS NOT NULL
+											--AND		Referrals.PatientStatusCodeCwt IN ('01','07','12') -- 2020.11.16 MB added as a comment because we found a reference to the Patient Status in the DoH CWT submission criteria and realised we had nothing in here
 											THEN	8 -- 2, Reportable							
 											
 													/*************** Do Closed Pathway Reasons (where you only want them closed if there isn't a reportable reason) next ***************/ --!!! NB !!! Add these reasons to DQ query 74: Patients who will appear on the CWT, but won't be on the PTL
@@ -2544,6 +2570,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		AND			Referrals.PriorityTypeCode = '02')											-- Urgent Screening Referral
 		OR			Referrals.DateConsultantUpgrade IS NOT NULL)								-- Upgrade
 		AND			CWT.TREATMENT_ID IS NOT NULL												-- Has a Deft record
+		--AND			ISNULL(Referrals.CancerTypeCode, 0) != 17									-- Not a cancer referral for non-specific symptoms (2020.11.16 MB Added as a comment ready to compensate for new exclusion under guidance v11)
 					
 
 		-- Update 62 day flags from the cwtReasonID, or mark as not applicable is there is no cwtReason
@@ -2622,12 +2649,24 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 										END
 					,AdjTime31		=	CASE
 										WHEN	CWT.DeftDefinitiveTreatment = 1				-- First Definitive Treatment
-										AND		Referral.DTTAdjReasonCode = 8				-- Patient Pause (referral record)
-										AND		CWT.DeftTreatmentSettingCode IN ('01','02')	-- Inpatient / Daycase
+										AND		(Referral.DTTAdjReasonCode IN (9, 10)		-- Egg harvesting / Medical delay (referral record)
+										OR		(Referral.DTTAdjReasonCode = 8				-- Patient Pause (referral record)
+										AND		CWT.DeftTreatmentSettingCode IN ('01','02')	-- Inpatient / Daycase pauses only in Cancer guidance v10
+										AND		CWT.DeftDateTreatment < '01 July 2020')		-- Cancer guidance v10 is before 1st July 2020
+										OR		(Referral.DTTAdjReasonCode = 8				-- Patient Pause (referral record)
+										AND		(CWT.DeftDateTreatment >= '01 July 2020'	-- Cancer guidance v11 (which allows for admitted and non-admitted pauses is after 1st July 2020
+										OR		CWT.DeftDateTreatment IS NULL))				-- Assume non-treated patients are due to be treated in the future, which is now after 1st July 2020
+												)
 										THEN	ISNULL(Referral.DTTAdjTime, 0)
 										WHEN	ISNULL(CWT.DeftDefinitiveTreatment, 0) != 1	-- Not First Definitive Treatment
-										AND		CWT.DeftDTTAdjReasonCode = 8				-- Patient Pause (deft record) - Subsequent treatments adjustments only
-										AND		CWT.DeftTreatmentSettingCode IN ('01','02')	-- Inpatient / Daycase
+										AND		(CWT.DeftDTTAdjReasonCode IN (9, 10)		-- Egg harvesting / Medical delay (referral record)
+										OR		(CWT.DeftDTTAdjReasonCode = 8				-- Patient Pause (referral record)
+										AND		CWT.DeftTreatmentSettingCode IN ('01','02')	-- Inpatient / Daycase pauses only in Cancer guidance v10
+										AND		CWT.DeftDateTreatment < '01 July 2020')		-- Cancer guidance v10 is before 1st July 2020
+										OR		(CWT.DeftDTTAdjReasonCode = 8				-- Patient Pause (referral record)
+										AND		(CWT.DeftDateTreatment >= '01 July 2020'	-- Cancer guidance v11 (which allows for admitted and non-admitted pauses is after 1st July 2020
+										OR		CWT.DeftDateTreatment IS NULL))				-- Assume non-treated patients are due to be treated in the future, which is now after 1st July 2020
+												)
 										THEN	ISNULL(CWT.DeftDTTAdjTime, 0)
 										ELSE	0
 										END
@@ -3010,7 +3049,8 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 								,Ref.DateFirstSeen
 								,CWT.ReportDate
 								,Ref.FirstAppointmentTypeCode
-								,Ref.ReasonNoAppointmentCode) = cwts_2WW_checkValidity.cwtStatusId
+								,Ref.ReasonNoAppointmentCode
+								,Ref.CancerTypeCode) = cwts_2WW_checkValidity.cwtStatusId
 						AND	cwts_2WW_checkValidity.applicable2WW = 1 -- so that we only return values that are valid for a 2WW pathway
 						AND	cwts_2WW_checkValidity.IsDeleted = 0
 		LEFT JOIN	LocalConfig.ReportingCwtStatus cwts_2WW
@@ -3024,7 +3064,8 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 								,CWT.Breach28
 								,Ref.IsCwtCancerDiagnosis
 								,Ref.DateFirstSeen
-								,CWT.ReportDate) = cwts_28_checkValidity.cwtStatusId
+								,CWT.ReportDate
+								,Ref.CancerTypeCode) = cwts_28_checkValidity.cwtStatusId
 						AND	cwts_28_checkValidity.applicable28 = 1 -- so that we only return values that are valid for a 28 day pathway
 						AND	cwts_28_checkValidity.IsDeleted = 0
 		LEFT JOIN	LocalConfig.ReportingCwtStatus cwts_28
@@ -3044,7 +3085,9 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 								,CWT.ReportDate
 								,Ref.FirstAppointmentTypeCode
 								,Ref.DateReceipt
-								,Ref.CancerSite) = cwts_62_checkValidity.cwtStatusId
+								,Ref.CancerSite
+								,Ref.CancerTypeCode
+								,CWT.cwtFlag28) = cwts_62_checkValidity.cwtStatusId
 						AND	cwts_62_checkValidity.applicable62 = 1 -- so that we only return values that are valid for a 62 day pathway
 						AND	cwts_62_checkValidity.IsDeleted = 0
 		LEFT JOIN	LocalConfig.ReportingCwtStatus cwts_62
@@ -3305,17 +3348,21 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 																ELSE lna.MaxUpdate						--else uses when last Next Action added after trackingnote (or tracking note or action is null)
 																END
 																,comm.CommentDate						--else date last tracked
-																,CASE	WHEN CWT.DeftDefinitiveTreatment = 1
-																		THEN CWT.ClockStartDate62		--else when 62day clock starts
-																		ELSE CWT.ClockStartDate31		
-																END
-																,Referrals.DateReceipt						--else days since last referred
+																,CWT.LastClockStart						--else when last CWT clock started
+																,Referrals.DateReceipt					--else days since last referred
 																) 
 		
 		FROM		SCR_Warehouse.SCR_Referrals_work Referrals	
-		LEFT JOIN	SCR_Warehouse.SCR_CWT_work CWT
+		LEFT JOIN	(SELECT		CARE_ID
+								,MAX(CASE	WHEN DeftDefinitiveTreatment = 1
+											THEN ClockStartDate62		--else when 62day clock starts
+											ELSE ClockStartDate31		
+											END) AS LastClockStart
+					FROM		SCR_Warehouse.SCR_CWT_work
+					GROUP BY	CARE_ID
+					) CWT
 						ON	Referrals.CARE_ID = CWT.CARE_ID
-		LEFT JOIN	SCR_Warehouse.SCR_Comments comm--_work comm
+		LEFT JOIN	SCR_Warehouse.SCR_Comments_work comm--_work comm
 						ON	Referrals.CARE_ID = comm.CARE_ID
 						AND	comm.CommentType = 1 -- Tracking Notes
 						AND	comm.CommentTypeCareIdRevIx = 1 -- the most recent tracking note
@@ -3377,6 +3424,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 				--RootCauseReceivedComments text NULL,
 				--RootCauseReturnedComments text NULL,	
 				IptReasonTypeCareIdIx int NULL,
+				IsTransferOfCare bit NULL,
 				LastUpdatedBy varchar(50) NULL
 				
 				)
@@ -3389,6 +3437,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 					,IPTReferralReasonCode
 					,TertiaryReferralOutComments
 					,ACTION_ID
+					,IsTransferOfCare
 					,LastUpdatedBy 
 					)
 		SELECT
@@ -3399,6 +3448,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 					,IPTReasonCode					= 		TRef.ReasonID			
 					,TertiaryReferralOutComments	= 		TRef.Comments			
 					,ACTION_ID						= 		TRef.ACTION_ID	
+					,IsTransferOfCare				=		TRef.IsTransferOfCare
 					,LastUpdatedBy					=		userprofile.FULL_NAME + ' {.' + users.LoweredUserName + '.}'	
 		FROM		 LocalConfig.tblTERTIARY_REFERRALS TRef
 		LEFT JOIN	#Incremental Inc
@@ -3426,7 +3476,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		/*links to Tertiary Received table which contains referral recieved date and reasons for referral in*/
 		UPDATE		IPTW
 		SET			IPTDate							=		TRec.DateReceived				
-					,TertiaryReferralInComments		=		TRec.ReturnedComments			
+					,TertiaryReferralInComments		=		TRR.Comments			
 					--,RootCauseReceivedComments	=		TRec.RootCauseReceivedComments	
 					--,RootCauseReturnedComments	=		TRec.RootCauseReturnedComments
 					--,RequestReceivedDate			=		TRec.RequestReceivedDate		
@@ -3435,6 +3485,8 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		FROM 		SCR_Warehouse.SCR_InterProviderTransfers_Work IPTW
 		LEFT JOIN	LocalConfig.tblTERTIARY_REFERRALS_RECEIVED TRec 
 						ON IPTW.TertiaryReferralID = TRec.TertiaryReferralID
+		LEFT JOIN	LocalConfig.TertiaryReferralReturns TRR
+						ON IPTW.TertiaryReferralID = TRR.TertiaryReferralID
 
 		/*links to Referring organisation lookup description*/
 		UPDATE		IPTW
@@ -3900,22 +3952,26 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 			DROP TABLE SCR_Warehouse.Workflow_work
 					
 		CREATE TABLE SCR_Warehouse.Workflow_work (
-					CWT_ID varchar(255) NOT NULL
+					IdentityTypeRecordId varchar(255) NOT NULL
+					,IdentityTypeId int NOT NULL
 					,WorkflowID int NOT NULL
 					)
 				
 		-- Create a Primary Key for Workflow_work
 		ALTER TABLE SCR_Warehouse.Workflow_work 
 		ADD CONSTRAINT PK_Workflow_work PRIMARY KEY (
-				CWT_ID ASC
+				IdentityTypeRecordId ASC
+				,IdentityTypeId ASC
 				,WorkflowID ASC
 				)
 		
-		-- Insert 2ww: Undated
+		-- Insert CWT_ID for 2ww: Undated
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,1 as WorkflowID
 		FROM		SCR_Warehouse.SCR_Referrals_work Ref 
 		LEFT JOIN	SCR_Warehouse.SCR_CWT_work CWT
@@ -3923,11 +3979,13 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		WHERE		CWT.cwtFlag2WW = 1 
 		AND			Ref.DateFirstSeen is null 
 
-		-- Insert 2ww: Undated > 5 Days
+		-- Insert CWT_ID for 2ww: Undated > 5 Days
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,2 as WorkflowID
 		FROM		SCR_Warehouse.SCR_Referrals_work Ref 
 		LEFT JOIN	SCR_Warehouse.SCR_CWT_work CWT
@@ -3936,11 +3994,13 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		AND			Ref.DateFirstSeen is null
 		AND			CWT.Waitingtime2WW > 5
 
-		-- Insert 2ww: Pending
+		-- Insert CWT_ID for 2ww: Pending
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,3 as WorkflowID
 		FROM		SCR_Warehouse.SCR_Referrals_work Ref 
 		LEFT JOIN	SCR_Warehouse.SCR_CWT_work CWT
@@ -3948,11 +4008,13 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		WHERE		CWT.cwtFlag2WW = 1 
 		AND			Ref.DateFirstSeen is not null 
 
-		-- Insert 2ww: Pending > 14 Days
+		-- Insert CWT_ID for 2ww: Pending > 14 Days
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,4 as WorkflowID
 		FROM		SCR_Warehouse.SCR_Referrals_work Ref 
 		LEFT JOIN	SCR_Warehouse.SCR_CWT_work CWT
@@ -3961,83 +4023,130 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 		AND			Ref.DateFirstSeen is not null
 		AND			CWT.WillBeWaitingtime2WW > 14	
 
-		-- Insert 62 Day: > 104 Days
+		-- Insert CWT_ID for 62 Day: > 104 Days
 		INSERT INTO	SCR_Warehouse.Workflow_work	(
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,5 as WorkflowID
 		FROM		SCR_Warehouse.SCR_CWT_work CWT
 		WHERE		CWT.cwtFlag62 = 1
 		AND			CWT.Waitingtime62 >104	
 
-		-- Insert 62 Day: >= 62 Days
+		-- Insert CWT_ID for 62 Day: >= 62 Days
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,6 as WorkflowID
 		FROM		SCR_Warehouse.SCR_CWT_work CWT
 		WHERE		CWT.cwtFlag62 = 1
 		AND			CWT.Waitingtime62 > 62
 
-		-- Insert 62 Day: 28-62 Days
+		-- Insert CWT_ID for 62 Day: 28-62 Days
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,7 as WorkflowID
 		FROM		SCR_Warehouse.SCR_CWT_work CWT
 		WHERE		CWT.cwtFlag62 = 1
 		AND			(Waitingtime62 >=28 AND Waitingtime62 <=62)	
 
-		-- Insert Next Action Date in Past or a NA is Undated
+		-- Insert CWT_ID for Next Action Date in Past or a NA is Undated
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,8 as WorkflowID
 		FROM		SCR_Warehouse.SCR_CWT_work CWT 
 		LEFT JOIN	SCR_Warehouse.SCR_NextActions NA
 						ON	CWT.CARE_ID = NA.CareID 
-						AND	NA.CareIdIncompleteIx = 1
+						AND	NA.ActionComplete = 0
 		WHERE		NA.TargetDate < NA.ReportDate
 		OR			(NA.TargetDate IS NULL 
 					AND NA.CareID IS NOT NULL)
+		GROUP BY	CWT.CWT_ID
 
-		-- Insert Next Action Date > 10 days away
+		-- Insert PathwayUpdateEventId for Next Action Date in Past or a NA is Undated
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
+					,WorkflowID)
+		SELECT		NA.PathwayUpdateEventId
+					,3 as IdentityTypeId -- PathwayUpdateEventId
+					,8 as WorkflowID
+		FROM		SCR_Warehouse.SCR_CWT_work CWT 
+		INNER JOIN	SCR_Warehouse.SCR_NextActions NA
+						ON	CWT.CARE_ID = NA.CareID 
+						AND	NA.ActionComplete = 0
+		WHERE		NA.TargetDate < NA.ReportDate
+		OR			(NA.TargetDate IS NULL 
+					AND NA.CareID IS NOT NULL)
+		GROUP BY	NA.PathwayUpdateEventId
+
+		-- Insert CWT_ID for Next Action Date > 10 days away
+		INSERT INTO	SCR_Warehouse.Workflow_work (
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,9 as WorkflowID
 		FROM		SCR_Warehouse.SCR_CWT_work CWT 
 		LEFT JOIN	SCR_Warehouse.SCR_NextActions NA
 						ON	CWT.CARE_ID = NA.CareID 
 						AND	NA.CareIdIncompleteIx = 1
-		WHERE		DATEDIFF(dd,NA.ReportDate,NA.TargetDate) >=10
+		WHERE		DATEDIFF(dd,CWT.ReportDate,NA.TargetDate) >=10
 
-		-- Insert No Next Action
+		-- Insert PathwayUpdateEventId for Next Action Date > 10 days away
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
+					,WorkflowID)
+		SELECT		NA.PathwayUpdateEventId
+					,3 as IdentityTypeId -- PathwayUpdateEventId
+					,9 as WorkflowID
+		FROM		SCR_Warehouse.SCR_CWT_work CWT 
+		INNER JOIN	SCR_Warehouse.SCR_NextActions NA
+						ON	CWT.CARE_ID = NA.CareID 
+						AND	NA.ActionComplete = 0
+		WHERE		DATEDIFF(dd,CWT.ReportDate,NA.TargetDate) >=10
+
+		-- Insert CWT_ID for No Next Action
+		INSERT INTO	SCR_Warehouse.Workflow_work (
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
 		SELECT		CWT.CWT_ID
+					,2 as IdentityTypeId -- CWT_ID
 					,10 as WorkflowID
 		FROM		SCR_Warehouse.SCR_CWT_work CWT 
 		LEFT JOIN	SCR_Warehouse.SCR_NextActions NA
 						ON	CWT.CARE_ID = NA.CareID 
-						AND	NA.CareIdIncompleteIx = 1
+						AND	NA.ActionComplete = 0
 		WHERE		NA.CareID IS NULL
 		
 		-- Insert Ptl Meeting Workflow
 		INSERT INTO	SCR_Warehouse.Workflow_work (
-					CWT_ID
+					IdentityTypeRecordId
+					,IdentityTypeId
 					,WorkflowID)
-		SELECT		wf.CWT_ID
+		SELECT		wf.IdentityTypeRecordId
+					,wf.IdentityTypeId
 					,11 as WorkflowID
 		FROM		SCR_Warehouse.Workflow_work wf
 		WHERE		wf.WorkflowID IN (8,9,10)
-		GROUP BY	wf.CWT_ID
+		GROUP BY	wf.IdentityTypeRecordId
+					,wf.IdentityTypeId
 
 
 		-- Keep a record of when the Workflow_work dataset finished
@@ -4205,6 +4314,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 							,FastDiagInformingCareProfCode
 							,FastDiagInformingCareProfDesc
 							,FastDiagOtherCareProf
+							,FDPlannedInterval
 							,DateDiagnosis
 							,AgeAtDiagnosis
 							,DiagnosisCode
@@ -4331,6 +4441,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 							,rw.FastDiagInformingCareProfCode
 							,rw.FastDiagInformingCareProfDesc
 							,rw.FastDiagOtherCareProf
+							,rw.FDPlannedInterval
 							,rw.DateDiagnosis
 							,rw.AgeAtDiagnosis
 							,rw.DiagnosisCode
@@ -4853,6 +4964,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 							,ReceivingOrgName
 							,TertiaryReferralInComments
 							,IptReasonTypeCareIdIx
+							,IsTransferOfCare
 							,LastUpdatedBy)
 				SELECT		iptw.TertiaryReferralID
 							,iptw.CareID
@@ -4873,6 +4985,7 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 							,iptw.ReceivingOrgName
 							,iptw.TertiaryReferralInComments
 							,iptw.IptReasonTypeCareIdIx
+							,iptw.IsTransferOfCare
 							,iptw.LastUpdatedBy
 				FROM		SCR_Warehouse.SCR_InterProviderTransfers_Work iptw
 
@@ -4960,26 +5073,52 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 				-- Keep a record of when the "Final" incremental Workflow dataset started
 				EXEC SCR_Warehouse.uspUpdateProcessAudit @UpdateType = 1, @Process = 'SCR_Warehouse.uspCreateSomersetReportingData', @Step = '"Final" incremental Workflow dataset'
 				
-				-- Delete any records that are no longer in tblMainReferrals
+				-- Delete any CWT_ID records that are no longer in tblMainReferrals
 				DELETE
 				FROM		wf
 				FROM		SCR_Warehouse.Workflow wf
 				LEFT JOIN	#MainRefCareIds mainref
-								ON	LEFT(wf.CWT_ID, CHARINDEX('|',wf.CWT_ID)-1) = mainref.CARE_ID						-- to ensure we exclude records that have been deleted (we can only identify these by their absence from tblMAIN_REFERRALS)
+								ON	LEFT(wf.IdentityTypeRecordId, CHARINDEX('|',wf.IdentityTypeRecordId)-1) = mainref.CARE_ID						-- to ensure we exclude records that have been deleted (we can only identify these by their absence from tblMAIN_REFERRALS)
 				WHERE		mainref.CARE_ID IS NULL
+				AND			wf.IdentityTypeId = 2
 				
-				-- Delete any records that have been reprocessed by the incremental load
+				-- Delete any PathwayUpdateEventId records that are no longer in tblMainReferrals
+				DELETE
+				FROM		wf
+				FROM		SCR_Warehouse.Workflow wf
+				INNER JOIN	SCR_Warehouse.SCR_NextActions NA
+								ON	wf.IdentityTypeRecordId = NA.PathwayUpdateEventId
+				LEFT JOIN	#MainRefCareIds mainref
+								ON	NA.CareID = mainref.CARE_ID						-- to ensure we exclude records that have been deleted (we can only identify these by their absence from tblMAIN_REFERRALS)
+				WHERE		mainref.CARE_ID IS NULL
+				AND			wf.IdentityTypeId = 3
+		
+				-- Delete any CWT_ID records that have been reprocessed by the incremental load
 				DELETE
 				FROM		wf
 				FROM		SCR_Warehouse.Workflow wf
 				INNER JOIN	#Incremental inc
-								ON	LEFT(wf.CWT_ID, CHARINDEX('|',wf.CWT_ID)-1) = inc.CARE_ID
+								ON	LEFT(wf.IdentityTypeRecordId, CHARINDEX('|',wf.IdentityTypeRecordId)-1) = inc.CARE_ID
+				WHERE		wf.IdentityTypeId = 2
+
+				-- Delete any PathwayUpdateEventId records that have been reprocessed by the incremental load
+				DELETE
+				FROM		wf
+				FROM		SCR_Warehouse.Workflow wf
+				INNER JOIN	SCR_Warehouse.SCR_NextActions NA
+								ON	wf.IdentityTypeRecordId = NA.PathwayUpdateEventId
+				INNER JOIN	#Incremental inc
+								ON	NA.CareID = inc.CARE_ID
+				WHERE		wf.IdentityTypeId = 3
 	
 				-- Insert Workflow records updated by the incremental process
 				INSERT INTO	SCR_Warehouse.Workflow
-							(CWT_ID
+							(
+							IdentityTypeRecordId
+							,IdentityTypeId
 							,WorkflowID)
-				SELECT		wfw.CWT_ID
+				SELECT		wfw.IdentityTypeRecordId
+							,wfw.IdentityTypeId
 							,wfw.WorkflowID
 				FROM		SCR_Warehouse.Workflow_work wfw
 
@@ -5131,6 +5270,18 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 				-- Rename the Ix_CARE_ID index on SCR_CWT
 				EXEC sp_rename 'SCR_Warehouse.SCR_CWT.Ix_TxMod_Work', 'Ix_TxMod'
 
+				-- Rename the CWT_ID default constraint on SCR_CWT
+				EXEC sp_rename 'SCR_Warehouse.DF_CWT_ID_SCR_CWT_work', 'DF_CWT_ID_SCR_CWT'
+
+				-- Rename the Tx_ID default constraint on SCR_CWT
+				EXEC sp_rename 'SCR_Warehouse.DF_Tx_ID_SCR_CWT_work', 'DF_Tx_ID_SCR_CWT'
+
+				-- Rename the HasTxMod default constraint on SCR_CWT
+				EXEC sp_rename 'SCR_Warehouse.DF_HasTxMod_SCR_CWT_work', 'DF_HasTxMod_SCR_CWT'
+
+				-- Rename the HasChemRtLink default constraint on SCR_CWT
+				EXEC sp_rename 'SCR_Warehouse.DF_HasChemRtLink_SCR_CWT_work', 'DF_HasChemRtLink_SCR_CWT'
+
 				------------------------ SCR_Comments ------------------------
 				---------------------------------------------------------------
 				-- DROP SCR_Comments table if it exists
@@ -5204,8 +5355,11 @@ Description:				Create the warehouse datasets for all SCR / Somerset reporting
 				-- Rename the SCR_Referrals_Work table as SCR_Referrals
 				EXEC sp_rename 'SCR_Warehouse.SCR_Referrals_Work', 'SCR_Referrals'
 
-				-- Rename the Primary Key on SCR_CWT
+				-- Rename the Primary Key on SCR_Referrals
 				EXEC sp_rename 'SCR_Warehouse.SCR_Referrals.PK_SCR_Referrals_Work', 'PK_SCR_Referrals'
+
+				-- Rename the PATIENT_ID default constraint on SCR_Referrals
+				EXEC sp_rename 'SCR_Warehouse.DF_PatID_SCR_Referrals_work', 'DF_PatID_SCR_Referrals'
 
 		END
 

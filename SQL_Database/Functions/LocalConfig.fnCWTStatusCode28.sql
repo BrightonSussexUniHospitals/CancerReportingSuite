@@ -48,7 +48,8 @@ CREATE FUNCTION [LocalConfig].[fnCWTStatusCode28]
 	@Breach28 int,
 	@IsCwtCancerDiagnosis int,
 	@DateFirstSeen smalldatetime,
-	@ReportDate datetime	
+	@ReportDate datetime,
+	@CancerTypeCode varchar(2)
 
 	--@OrgCodeFirstSeen varchar (5), 
 	--@DeftOrgCodeTreatment varchar (5),
@@ -70,6 +71,10 @@ BEGIN
 	-- Not Applicable
 	IF @cwtFlag28 = 4
 	RETURN	38
+
+	-- Suspected cancer – referral to serious non-specific symptom clinic
+	IF		@CancerTypeCode = '17'
+	RETURN	55
 
 	-- Referral pre-Apr 19
 	IF 	@DateReceipt < '01 Apr 2019'

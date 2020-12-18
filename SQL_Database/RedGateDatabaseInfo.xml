@@ -9,7 +9,7 @@
   <IsAzure>False</IsAzure>
   <ScriptFolderType>Default</ScriptFolderType>
   <MaxDataFileSize>10485760</MaxDataFileSize>
-  <ProjectGuid>4355875a-7a94-4c39-bbcb-e6030e35f967</ProjectGuid>
+  <ProjectGuid>7338e66b-e74e-46c1-ab1c-c1657cac148e</ProjectGuid>
   <WriteToFileOptions>
     <Prefixes>
       <None>
@@ -59,6 +59,24 @@
     <DataWriteAllFilesInOneDirectory>True</DataWriteAllFilesInOneDirectory>
   </WriteToFileOptions>
   <DataFileSet>
-    <Count>0</Count>
+    <Count>18</Count>
+    <DataFile>LocalConfig.PathwayLengthFilter_Data.sql</DataFile>
+    <DataFile>LocalConfig.ReportingCwtPathwayType_Data.sql</DataFile>
+    <DataFile>LocalConfig.ReportingCwtStatus_Data.sql</DataFile>
+    <DataFile>LocalConfig.ReportingWorkflows_Data.sql</DataFile>
+    <DataFile>LocalConfig.SCR_PTL_LT_ChangeHistoryFields_Data.sql</DataFile>
+    <DataFile>LocalConfig.WaitTargetRagThresholds_Data.sql</DataFile>
+    <DataFile>Lookup.commentTypes_Data.sql</DataFile>
+    <DataFile>Lookup.cwtFlags_Data.sql</DataFile>
+    <DataFile>Lookup.cwtReasons_Data.sql</DataFile>
+    <DataFile>Lookup.cwtStandards_Data.sql</DataFile>
+    <DataFile>Lookup.cwtTypes_Data.sql</DataFile>
+    <DataFile>Lookup.IdentityTypes_Data.sql</DataFile>
+    <DataFile>Lookup.IPTType_Data.sql</DataFile>
+    <DataFile>Lookup.ReplicaTables_Data.sql</DataFile>
+    <DataFile>Lookup.WaitTargetGroups_Data.sql</DataFile>
+    <DataFile>Lookup.WaitTargetRagColours_Data.sql</DataFile>
+    <DataFile>Lookup.WaitTargets_Data.sql</DataFile>
+    <DataFile>Lookup.WaitTargetsOpenCwtMapping_Data.sql</DataFile>
   </DataFileSet>
 </DatabaseInformation>

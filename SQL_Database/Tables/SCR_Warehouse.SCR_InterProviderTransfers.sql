@@ -19,6 +19,7 @@ CREATE TABLE [SCR_Warehouse].[SCR_InterProviderTransfers]
 [ReceivingOrgName] [varchar] (100) COLLATE Latin1_General_CI_AS NULL,
 [TertiaryReferralInComments] [varchar] (max) COLLATE Latin1_General_CI_AS NULL,
 [IptReasonTypeCareIdIx] [int] NULL,
+[IsTransferOfCare] [bit] NULL,
 [LastUpdatedBy] [varchar] (50) COLLATE Latin1_General_CI_AS NULL
 ) ON [PRIMARY]
 GO

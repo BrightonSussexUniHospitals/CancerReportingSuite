@@ -136,6 +136,7 @@ Description:				Keep a copy of the most recent record for each pathway
 					FastDiagInformingCareProfCode varchar(3) NULL,	-- ltblCareProfessional.DataDictionaryCode
 					FastDiagInformingCareProfDesc varchar(70) NULL,	-- ltblCareProfessional.Description
 					FastDiagOtherCareProf varchar(50) NULL,		-- tblMAIN_REFERRALS.FasterDiagnosisOtherCareProfessional
+					FDPlannedInterval bit NULL,					-- tblMAIN_REFERRALS.FDPlannedInterval
 					-- Referral Diagnoses
 					DateDiagnosis smalldatetime NULL,			-- N4_1_DIAGNOSIS_DATE
 					AgeAtDiagnosis int NULL,
@@ -548,6 +549,7 @@ Description:				Keep a copy of the most recent record for each pathway
 							,FastDiagInformingCareProfCode
 							,FastDiagInformingCareProfDesc
 							,FastDiagOtherCareProf
+							,FDPlannedInterval
 							-- Referral Diagnoses
 							,DateDiagnosis
 							,AgeAtDiagnosis
@@ -869,6 +871,7 @@ Description:				Keep a copy of the most recent record for each pathway
 							,FastDiagInformingCareProfCode	=	Hist.FastDiagInformingCareProfCode
 							,FastDiagInformingCareProfDesc	=	Hist.FastDiagInformingCareProfDesc
 							,FastDiagOtherCareProf			=	Hist.FastDiagOtherCareProf
+							,FDPlannedInterval				=	Hist.FDPlannedInterval
 							-- Referral Diagnoses
 							,DateDiagnosis					=	Hist.DateDiagnosis
 							,AgeAtDiagnosis					=	Hist.AgeAtDiagnosis

@@ -1,0 +1,7 @@
+INSERT INTO [Lookup].[WaitTargets] ([WaitTargetId], [WaitTargetDesc], [WaitTargetDays], [WaitTargetGroupId], [WaitTargetPriority]) VALUES (1, '2WW', 14, 3, 4)
+INSERT INTO [Lookup].[WaitTargets] ([WaitTargetId], [WaitTargetDesc], [WaitTargetDays], [WaitTargetGroupId], [WaitTargetPriority]) VALUES (2, '28 Day', 28, 2, 6)
+INSERT INTO [Lookup].[WaitTargets] ([WaitTargetId], [WaitTargetDesc], [WaitTargetDays], [WaitTargetGroupId], [WaitTargetPriority]) VALUES (3, '31 Day', 31, 2, 7)
+INSERT INTO [Lookup].[WaitTargets] ([WaitTargetId], [WaitTargetDesc], [WaitTargetDays], [WaitTargetGroupId], [WaitTargetPriority]) VALUES (4, '62 Day', 62, 1, 2)
+INSERT INTO [Lookup].[WaitTargets] ([WaitTargetId], [WaitTargetDesc], [WaitTargetDays], [WaitTargetGroupId], [WaitTargetPriority]) VALUES (5, 'Rare', 31, 1, 5)
+INSERT INTO [Lookup].[WaitTargets] ([WaitTargetId], [WaitTargetDesc], [WaitTargetDays], [WaitTargetGroupId], [WaitTargetPriority]) VALUES (6, 'IPT+24', 24, 4, 3)
+INSERT INTO [Lookup].[WaitTargets] ([WaitTargetId], [WaitTargetDesc], [WaitTargetDays], [WaitTargetGroupId], [WaitTargetPriority]) VALUES (7, '104 Day', 104, 4, 1)
