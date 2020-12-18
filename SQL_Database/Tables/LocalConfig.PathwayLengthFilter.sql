@@ -1,7 +1,7 @@
 CREATE TABLE [LocalConfig].[PathwayLengthFilter]
 (
 [PathwayLengthFilterId] [int] NOT NULL,
-[PathwayLengthFilterName] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
+[PathwayLengthFilterName] [varchar] (255) NOT NULL,
 [LowerBound] [int] NULL,
 [UpperBound] [int] NULL
 ) ON [PRIMARY]

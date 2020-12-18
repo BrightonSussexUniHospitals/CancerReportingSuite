@@ -1,7 +1,7 @@
 CREATE TABLE [Lookup].[IPTType]
 (
 [IPTTypeID] [int] NOT NULL,
-[IPTTypeDesc] [varchar] (255) COLLATE Latin1_General_CI_AS NULL
+[IPTTypeDesc] [varchar] (255) NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [Lookup].[IPTType] ADD CONSTRAINT [PK_IPTType] PRIMARY KEY CLUSTERED  ([IPTTypeID]) ON [PRIMARY]

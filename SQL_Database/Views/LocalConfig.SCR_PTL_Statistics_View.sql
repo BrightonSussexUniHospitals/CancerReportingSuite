@@ -3,6 +3,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
 CREATE VIEW [LocalConfig].[SCR_PTL_Statistics_View] 
 AS
 
@@ -67,6 +68,7 @@ SELECT		PtlSnapshotId
 			,FastDiagOtherCommMethod
 			,FastDiagInformingCareProfID
 			,FastDiagOtherCareProf
+			,FDPlannedInterval
 			,CASE	WHEN AgeAtDiagnosis < 0
 					THEN '-ve'
 					WHEN AgeAtDiagnosis >= 0 AND AgeAtDiagnosis < 10

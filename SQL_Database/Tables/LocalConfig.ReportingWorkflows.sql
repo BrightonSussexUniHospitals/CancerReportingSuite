@@ -1,7 +1,7 @@
 CREATE TABLE [LocalConfig].[ReportingWorkflows]
 (
 [WorkflowID] [int] NOT NULL,
-[WorkflowDesc] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
+[WorkflowDesc] [varchar] (255) NOT NULL,
 [WorkflowSortOrder] [int] NULL
 ) ON [PRIMARY]
 GO

@@ -1,3 +1,0 @@
-CREATE SCHEMA [TempImport]
-AUTHORIZATION [dbo]
-GO

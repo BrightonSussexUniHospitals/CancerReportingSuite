@@ -4,23 +4,23 @@ CREATE TABLE [SCR_Warehouse].[SCR_InterProviderTransfers]
 [CareID] [int] NULL,
 [ACTION_ID] [int] NULL,
 [IPTTypeCode] [int] NULL,
-[IPTTypeDesc] [varchar] (100) COLLATE Latin1_General_CI_AS NULL,
+[IPTTypeDesc] [varchar] (100) NULL,
 [IPTDate] [datetime] NULL,
 [IPTReferralReasonCode] [int] NULL,
-[IPTReferralReasonDesc] [varchar] (100) COLLATE Latin1_General_CI_AS NULL,
+[IPTReferralReasonDesc] [varchar] (100) NULL,
 [IPTReceiptReasonCode] [int] NULL,
-[IPTReceiptReasonDesc] [varchar] (100) COLLATE Latin1_General_CI_AS NULL,
+[IPTReceiptReasonDesc] [varchar] (100) NULL,
 [ReferringOrgID] [int] NULL,
-[ReferringOrgCode] [varchar] (5) COLLATE Latin1_General_CI_AS NULL,
-[ReferringOrgName] [varchar] (100) COLLATE Latin1_General_CI_AS NULL,
-[TertiaryReferralOutComments] [varchar] (max) COLLATE Latin1_General_CI_AS NULL,
+[ReferringOrgCode] [varchar] (5) NULL,
+[ReferringOrgName] [varchar] (100) NULL,
+[TertiaryReferralOutComments] [varchar] (max) NULL,
 [ReceivingOrgID] [int] NULL,
-[ReceivingOrgCode] [varchar] (5) COLLATE Latin1_General_CI_AS NULL,
-[ReceivingOrgName] [varchar] (100) COLLATE Latin1_General_CI_AS NULL,
-[TertiaryReferralInComments] [varchar] (max) COLLATE Latin1_General_CI_AS NULL,
+[ReceivingOrgCode] [varchar] (5) NULL,
+[ReceivingOrgName] [varchar] (100) NULL,
+[TertiaryReferralInComments] [varchar] (max) NULL,
 [IptReasonTypeCareIdIx] [int] NULL,
 [IsTransferOfCare] [bit] NULL,
-[LastUpdatedBy] [varchar] (50) COLLATE Latin1_General_CI_AS NULL
+[LastUpdatedBy] [varchar] (50) NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [SCR_Warehouse].[SCR_InterProviderTransfers] ADD CONSTRAINT [PK_InterProviderTransfers] PRIMARY KEY CLUSTERED  ([TertiaryReferralID]) ON [PRIMARY]

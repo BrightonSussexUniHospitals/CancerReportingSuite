@@ -1,7 +1,7 @@
 CREATE TABLE [Lookup].[WaitTargets]
 (
 [WaitTargetId] [int] NOT NULL,
-[WaitTargetDesc] [varchar] (255) COLLATE Latin1_General_CI_AS NULL,
+[WaitTargetDesc] [varchar] (255) NULL,
 [WaitTargetDays] [int] NULL,
 [WaitTargetGroupId] [int] NULL,
 [WaitTargetPriority] [int] NOT NULL

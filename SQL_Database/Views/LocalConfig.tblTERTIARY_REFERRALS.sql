@@ -37,14 +37,7 @@ Description:				Create a local config view to point at the place where the SCR
 							(e.g. live vs test or from one trust to another)
 **************************************************************************************************************************************************/
 
-		-- Select a replica dataset to mock the table that will be available in V20.1
-		SELECT		TertiaryReferralID
-                    ,CareID
-                    ,ReferringOrgID
-                    ,ReceivingOrgID
-                    ,ReasonID
-                    ,Comments
-                    ,ACTION_ID
-					,IsTransferOfCare	=	CAST(0 AS BIT)
-		FROM		[CancerRegister_Replicated_v19.01]..tblTERTIARY_REFERRALS
+		-- Select the whole dataset from the replica table
+		SELECT		*
+		FROM		[CancerRegister_Replicated_v20.01]..tblTERTIARY_REFERRALS
 GO

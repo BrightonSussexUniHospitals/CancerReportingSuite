@@ -1,7 +1,7 @@
 CREATE TABLE [SCR_Warehouse].[ProcessAudit]
 (
-[Process] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
-[Step] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
+[Process] [varchar] (255) NOT NULL,
+[Step] [varchar] (255) NOT NULL,
 [LastStarted] [datetime] NULL,
 [LastSuccessfullyCompleted] [datetime] NULL
 ) ON [PRIMARY]

@@ -1,6 +1,6 @@
 CREATE TABLE [SCR_Reporting].[RAG]
 (
-[CWT_ID] [varchar] (255) COLLATE Latin1_General_CI_AS NOT NULL,
+[CWT_ID] [varchar] (255) NOT NULL,
 [DominantPriority] [int] NULL,
 [Priority2WW] [int] NULL,
 [Priority28] [int] NULL,
