@@ -13,8 +13,9 @@ The installation scripts assume you have:
 1. Enter the ODS code for your organisation into the LocalConfig.fnOdsCode script (in the functions folder)
 1. Install the functions
 1. Install the views
-1. Alter the final dynamic SQL section of the LocalConfig.uspCreateReplicaViews script to point at your replica server (in the Stored Procedures folder)
-1. Install the stored procedures in the following order:
+1. Install the LocalConfig.uspCreateReplicaViews stored procedure
+1. Execute the LocalConfig.uspCreateReplicaViews stored procedure, entering the parameter values for the database name of your replica server and your version of SCR (e.g. 'V19.01')
+1. Install the remaining stored procedures in the following order:
 	1. CancerTransactions.uspCaptureEstimatedBreach
 	1. LocalConfig.uspCreateReplicaViews
 	1. SCR_Reporting.UspSSRS_2wwPTLSummary
@@ -35,7 +36,7 @@ The installation scripts assume you have:
 	1. SCR_Warehouse.uspCaptureNextActionChanges
 	1. SCR_Warehouse.uspCreateSomersetReportingData
 	1. SCR_Warehouse.uspScheduleSomersetReportingData
-1. EXEC LocalConfig.uspCreateReplicaViews to create the LocalConfig views of your replicated data
+	1. SCR_Reporting.uspSSRS_SQL_ProcessPerformance
 1. Install the jobs
 
 Once the jobs have been installed and start running, the SQL database should populate with your data and automatically refresh after the initial bulk load of data has happened
